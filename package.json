@@ -1,0 +1,19 @@
+{
+  "name": "guidebook",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n frontend,backend -c cyan,magenta \"bun run dev:frontend\" \"bun run dev:backend\"",
+    "dev:frontend": "bun run --filter frontend dev",
+    "dev:backend": "bun run --filter backend dev",
+    "lint": "bun run --filter frontend lint && bun run --filter backend lint",
+    "format": "bun run --filter frontend format && bun run --filter backend format"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "prettier": "^3.8.1"
+  }
+}
