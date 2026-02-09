@@ -9,11 +9,17 @@
 - ✅ MongoDB connection configured
 - ✅ Docker setup for deployment
 
-## In Progress
-
 ### Backend API
-- Status: Planning
+- ✅ Shared models package (`@guidebook/models`) with Zod schemas
+- ✅ Character model schemas with validation
+- ✅ Full CRUD API endpoints (Create, Read, List, Update, Delete)
+- ✅ Request/response validation with Zod
+- ✅ Error handling middleware
+- ✅ Request logging middleware
+- ✅ CORS configuration
 - Epic: [backend-api.md](epics/backend-api.md)
+
+## In Progress
 
 ## Not Started
 
@@ -27,4 +33,4 @@
 
 ---
 
-*Last updated: 2026-02-09*
+*Last updated: 2026-02-09 - Backend API Epic Complete*

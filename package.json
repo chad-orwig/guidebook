@@ -10,7 +10,8 @@
   },
   "workspaces": [
     "frontend",
-    "backend"
+    "backend",
+    "models"
   ],
   "devDependencies": {
     "concurrently": "^9.2.1",

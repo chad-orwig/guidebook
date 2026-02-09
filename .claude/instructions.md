@@ -13,6 +13,7 @@
 - See [planning.md](planning.md) for planning methodology
 - Stop and validate implementation after each task completion before moving to the next task
 - If scripts require user input, ask the user to run them instead of attempting to run them
+- **Never run long-running commands in the background** (servers, dev servers, watch processes) - ask the user to run these manually to prevent process accumulation
 
 ## Project Context
 - See [overview.md](overview.md) for project details

@@ -6,10 +6,10 @@ This epic establishes the Hono-based backend API that manages character data and
 
 ## Tasks
 
-- [ ] Shared models package setup
-- [ ] Define character model schemas
-- [ ] Character CRUD endpoints
-- [ ] Error handling and middleware
+- [x] Shared models package setup
+- [x] Define character model schemas
+- [x] Character CRUD endpoints
+- [x] Error handling and middleware
 
 ## Task Details
 

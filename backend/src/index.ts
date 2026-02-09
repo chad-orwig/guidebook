@@ -1,6 +1,11 @@
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import 'dotenv/config'
-import { connectToDatabase, checkDatabaseHealth } from '@/lib/db'
+import { connectToDatabase } from '@/lib/db'
+import healthRoutes from '@/routes/health'
+import charactersRoutes from '@/routes/characters'
+import { logger } from '@/middleware/logger'
+import { errorHandler } from '@/middleware/errorHandler'
 
 const app = new Hono()
 
@@ -10,25 +15,25 @@ connectToDatabase().catch((error) => {
   process.exit(1)
 })
 
+// Apply middleware
+app.use('*', logger)
+app.use(
+  '*',
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    credentials: true,
+  })
+)
+
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
-app.get('/health', async (c) => {
-  const dbHealth = await checkDatabaseHealth()
+// Mount routes
+app.route('/health', healthRoutes)
+app.route('/api/characters', charactersRoutes)
 
-  const response = {
-    status: dbHealth.connected ? 'ok' : 'degraded',
-    timestamp: new Date().toISOString(),
-    database: dbHealth
-  }
-
-  // Return 503 if database is not connected (for k8s health checks)
-  if (!dbHealth.connected) {
-    return c.json(response, 503)
-  }
-
-  return c.json(response, 200)
-})
+// Error handling
+app.onError(errorHandler)
 
 export default app
