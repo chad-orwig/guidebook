@@ -12,6 +12,8 @@
 
 ## Frameworks
 - **Frontend**: React
+  - **TanStack Router**: File-based routing
+  - **TanStack Query**: Data fetching and state management
 - **Backend**: Hono
 
 ## Database

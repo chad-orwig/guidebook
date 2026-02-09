@@ -22,3 +22,15 @@
 - Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components
 - Run from the `frontend/` directory
 - Example: `bunx --bun shadcn@latest add button`
+
+## Backend (Hono)
+
+- Only use `app.route` in [index.ts](backend/src/index.ts)
+- Define route handlers in separate files under `routes/`
+- Use middleware for shared features
+
+## DTOs
+
+- Live in separate workspace package (shared by frontend/backend)
+- Define as Zod schemas, export types with `z.infer<typeof schema>`
+- Use `.partial()`, `.omit()`, `.pick()`, `.extend()`, `.merge()` for DRY schemas

@@ -25,6 +25,7 @@ Plans are created from high to low level with user alignment at each step. Never
 - **Alignment required before proceeding**
 
 ### 5. Implementation Details
+- **Read [coding-standards.md](.claude/coding-standards.md) and [tech-stack.md](.claude/tech-stack.md) first**
 - Add technical implementation details to each task
 - How each task will be built
 - **Final alignment before implementation begins**
