@@ -5,6 +5,12 @@ This epic establishes the foundational project structure and local development e
 
 ## Tasks
 
+- [x] 1. Initialize Frontend Project
+- [x] 2. Initialize Backend Project
+- [x] 3. Setup Local MongoDB
+- [x] 4. Configure Hot Reload
+- [x] 5. Setup Linting
+
 ### 1. Initialize Frontend Project
 **Requirements:**
 - React application with TypeScript

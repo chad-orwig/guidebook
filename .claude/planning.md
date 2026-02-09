@@ -15,7 +15,7 @@ Plans are created from high to low level with user alignment at each step. Never
 - **Alignment required before proceeding**
 
 ### 3. High-Level Tasks
-- List short, descriptive task names
+- List short, descriptive task names using markdown checkboxes (`- [ ]`)
 - No details yet, just the task titles
 - **Alignment required before proceeding**
 
@@ -34,3 +34,4 @@ Plans are created from high to low level with user alignment at each step. Never
 - Plan one epic at a time
 - Get approval at each level before moving forward
 - Never skip alignment steps
+- Check off task checkboxes (`- [x]`) when completed to track progress
