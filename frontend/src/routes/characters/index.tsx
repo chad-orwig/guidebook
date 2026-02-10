@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import { CharacterCardSkeleton } from '@/components/CharacterCardSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
 import { useCharacters, useDeleteCharacter, useCreateCharacter } from '@/hooks/useCharacters';
+import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import {
@@ -30,6 +31,12 @@ import {
 } from '@/components/ui/dialog';
 
 export const Route = createFileRoute('/characters/')({
+  beforeLoad: async () => {
+    const session = await authClient.getSession();
+    if (!session.data) {
+      throw redirect({ to: '/login' });
+    }
+  },
   component: CharacterList,
 });
 

@@ -19,6 +19,7 @@ import {
   deleteImageFile,
   ALLOWED_MIME_TYPES,
 } from '@/lib/storage';
+import { requireAuth } from '@/middleware/auth';
 import { join } from 'node:path';
 import { writeFile } from 'node:fs/promises';
 
@@ -37,7 +38,7 @@ function toCharacterDocument(doc: any): CharacterDocument {
 }
 
 // POST / - Create new character
-app.post('/', zValidator('json', CreateCharacterSchema), async (c) => {
+app.post('/', requireAuth, zValidator('json', CreateCharacterSchema), async (c) => {
   const data = c.req.valid('json');
   const db = await getDatabase();
   const collection = db.collection('characters');
@@ -64,7 +65,7 @@ const ListQuerySchema = z.object({
 });
 
 // GET / - List all characters (only id and name)
-app.get('/', zValidator('query', ListQuerySchema), async (c) => {
+app.get('/', requireAuth, zValidator('query', ListQuerySchema), async (c) => {
   const { sortBy, sortOrder } = c.req.valid('query');
   const db = await getDatabase();
   const collection = db.collection('characters');
@@ -102,7 +103,7 @@ app.get('/', zValidator('query', ListQuerySchema), async (c) => {
 });
 
 // GET /:id - Get single character by ID
-app.get('/:id', async (c) => {
+app.get('/:id', requireAuth, async (c) => {
   const id = c.req.param('id');
   const db = await getDatabase();
   const collection = db.collection('characters');
@@ -124,7 +125,7 @@ app.get('/:id', async (c) => {
 });
 
 // PUT /:id - Update existing character
-app.put('/:id', zValidator('json', UpdateCharacterSchema), async (c) => {
+app.put('/:id', requireAuth, zValidator('json', UpdateCharacterSchema), async (c) => {
   const id = c.req.param('id');
   const data = c.req.valid('json');
   const db = await getDatabase();
@@ -160,7 +161,7 @@ app.put('/:id', zValidator('json', UpdateCharacterSchema), async (c) => {
 });
 
 // POST /:id/images - Upload image
-app.post('/:id/images', async (c) => {
+app.post('/:id/images', requireAuth, async (c) => {
   const id = c.req.param('id');
   const db = await getDatabase();
   const collection = db.collection('characters');
@@ -273,6 +274,7 @@ app.post('/:id/images', async (c) => {
 // PATCH /:id/images/active - Set active image
 app.patch(
   '/:id/images/active',
+  requireAuth,
   zValidator('json', z.object({ filename: z.string() })),
   async (c) => {
     const id = c.req.param('id');
@@ -321,7 +323,7 @@ app.patch(
 );
 
 // DELETE /:id/images/:filename - Delete specific image
-app.delete('/:id/images/:filename', async (c) => {
+app.delete('/:id/images/:filename', requireAuth, async (c) => {
   const id = c.req.param('id');
   const filename = c.req.param('filename');
   const db = await getDatabase();
@@ -387,7 +389,7 @@ app.delete('/:id/images/:filename', async (c) => {
 });
 
 // DELETE /:id - Delete character
-app.delete('/:id', async (c) => {
+app.delete('/:id', requireAuth, async (c) => {
   const id = c.req.param('id');
   const db = await getDatabase();
   const collection = db.collection('characters');

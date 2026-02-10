@@ -41,9 +41,18 @@
 - ✅ Vite proxy configuration for consistent dev/prod routing
 - Epic: [character-image-upload.md](epics/character-image-upload.md)
 
-## In Progress
+### Admin Authentication
+- ✅ Better Auth integration with MongoDB adapter
+- ✅ Username-based authentication with email/password plugin
+- ✅ Admin user initialization from environment variables on startup
+- ✅ Login page with session management (7-day session duration)
+- ✅ Protected routes with `requireAuth` middleware
+- ✅ Profile page with password change functionality
+- ✅ Logout functionality with navigation guards
+- ✅ Route protection via TanStack Router `beforeLoad` hooks
+- Epic: [admin-authentication.md](epics/admin-authentication.md)
 
-None
+## In Progress
 
 ## Not Started
 
@@ -65,4 +74,4 @@ None
 
 ---
 
-*Last updated: 2026-02-10 - Character Image Upload Epic Completed*
+*Last updated: 2026-02-10 - Admin Authentication Epic Complete*

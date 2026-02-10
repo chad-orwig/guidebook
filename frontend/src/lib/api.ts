@@ -21,6 +21,7 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
       'Content-Type': 'application/json',
       ...options?.headers,
     },
+    credentials: 'include', // Ensure cookies are sent with requests
     ...options,
   });
 
@@ -76,6 +77,7 @@ export const api = {
       const response = await fetch(`/api/characters/${id}/images`, {
         method: 'POST',
         body: formData,
+        credentials: 'include', // Ensure cookies are sent with requests
         // Don't set Content-Type header, let browser set it with boundary
       });
 
