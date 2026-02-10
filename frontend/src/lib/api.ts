@@ -8,8 +8,11 @@ import type {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  status: number;
+
+  constructor(status: number, message: string) {
     super(message);
+    this.status = status;
     this.name = 'ApiError';
   }
 }
@@ -24,8 +27,21 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new ApiError(response.status, error.error || 'Request failed');
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+
+    // Extract error message from various formats
+    let message = 'Request failed';
+    if (typeof errorData.error === 'string') {
+      message = errorData.error;
+    } else if (typeof errorData.error === 'object' && errorData.error?.message) {
+      message = errorData.error.message;
+    } else if (typeof errorData.message === 'string') {
+      message = errorData.message;
+    } else if (typeof errorData.error === 'object') {
+      message = JSON.stringify(errorData.error);
+    }
+
+    throw new ApiError(response.status, message);
   }
 
   if (response.status === 204) {

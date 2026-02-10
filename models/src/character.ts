@@ -29,11 +29,7 @@ export const TailwindHueEnum = z.enum([
   'fuchsia',
   'pink',
   'rose',
-  'slate',
   'gray',
-  'zinc',
-  'neutral',
-  'stone',
 ]);
 
 export const TailwindShadeEnum = z.enum([
@@ -63,7 +59,7 @@ export const CharacterRelationshipSchema = z.object({
 // Base character schema (domain model, no _id)
 export const CharacterSchema = z.object({
   name: z.string().min(1),
-  creationDate: z.string().datetime().optional(),
+  creationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   species: z.string().optional(),
   personality: z.string().optional(),
   primaryColor: TailwindColorSchema.optional(),
@@ -85,7 +81,7 @@ export const CharacterListItemSchema = z.object({
   _id: z.string(),
   name: z.string(),
   species: z.string().optional(),
-  creationDate: z.string().datetime().optional(),
+  creationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   primaryColor: TailwindColorSchema.optional(),
 });
 

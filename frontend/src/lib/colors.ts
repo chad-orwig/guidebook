@@ -70,25 +70,9 @@ const colorClassMap: Record<string, Record<string, string>> = {
     '200': 'bg-rose-200', '300': 'bg-rose-300', '400': 'bg-rose-400', '500': 'bg-rose-500',
     '600': 'bg-rose-600', '700': 'bg-rose-700', '800': 'bg-rose-800', '900': 'bg-rose-900',
   },
-  slate: {
-    '200': 'bg-slate-200', '300': 'bg-slate-300', '400': 'bg-slate-400', '500': 'bg-slate-500',
-    '600': 'bg-slate-600', '700': 'bg-slate-700', '800': 'bg-slate-800', '900': 'bg-slate-900',
-  },
   gray: {
     '200': 'bg-gray-200', '300': 'bg-gray-300', '400': 'bg-gray-400', '500': 'bg-gray-500',
     '600': 'bg-gray-600', '700': 'bg-gray-700', '800': 'bg-gray-800', '900': 'bg-gray-900',
-  },
-  zinc: {
-    '200': 'bg-zinc-200', '300': 'bg-zinc-300', '400': 'bg-zinc-400', '500': 'bg-zinc-500',
-    '600': 'bg-zinc-600', '700': 'bg-zinc-700', '800': 'bg-zinc-800', '900': 'bg-zinc-900',
-  },
-  neutral: {
-    '200': 'bg-neutral-200', '300': 'bg-neutral-300', '400': 'bg-neutral-400', '500': 'bg-neutral-500',
-    '600': 'bg-neutral-600', '700': 'bg-neutral-700', '800': 'bg-neutral-800', '900': 'bg-neutral-900',
-  },
-  stone: {
-    '200': 'bg-stone-200', '300': 'bg-stone-300', '400': 'bg-stone-400', '500': 'bg-stone-500',
-    '600': 'bg-stone-600', '700': 'bg-stone-700', '800': 'bg-stone-800', '900': 'bg-stone-900',
   },
 };
 
