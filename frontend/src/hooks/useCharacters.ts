@@ -50,3 +50,39 @@ export function useUpdateCharacter(id: string) {
     },
   });
 }
+
+export function useUploadImage(characterId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => api.characters.uploadImage(characterId, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+      queryClient.invalidateQueries({ queryKey: ['characters', characterId] });
+    },
+  });
+}
+
+export function useSetActiveImage(characterId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (filename: string) => api.characters.setActiveImage(characterId, filename),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+      queryClient.invalidateQueries({ queryKey: ['characters', characterId] });
+    },
+  });
+}
+
+export function useDeleteImage(characterId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (filename: string) => api.characters.deleteImage(characterId, filename),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['characters'] });
+      queryClient.invalidateQueries({ queryKey: ['characters', characterId] });
+    },
+  });
+}

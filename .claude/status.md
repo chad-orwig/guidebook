@@ -28,21 +28,41 @@
 - ✅ Loading states and toast notifications
 - Epic: [character-management-ui.md](epics/character-management-ui.md)
 
+### Character Image Upload
+- ✅ Images stored in filesystem directories matching character MongoDB ID
+- ✅ Support multiple images per character for swapping
+- ✅ Delete directory when character is deleted
+- ✅ Max 20 images per character, 15MB file size limit
+- ✅ Magic byte validation for file types
+- ✅ Modal-based character creation flow
+- ✅ Drag-and-drop, paste (Ctrl/Cmd+V), and URL paste support
+- ✅ Square aspect ratio with crop-to-fill across all views
+- ✅ Clickable images in list view to enter edit mode
+- ✅ Vite proxy configuration for consistent dev/prod routing
+- Epic: [character-image-upload.md](epics/character-image-upload.md)
+
 ## In Progress
 
-### Character Image Upload
-- Images stored in filesystem directories matching character MongoDB ID
-- Support multiple images per character for swapping
-- Delete directory when character is deleted
-- Max 20 images per character, 15MB file size limit
-- Magic byte validation for file types
-- Modal-based character creation flow
-- Epic: [character-image-upload.md](epics/character-image-upload.md)
+None
 
 ## Not Started
 
 ### Guidebook Viewer Interface
 
+## Known Bugs
+
+### Date Input Calendar Widget - Cursor Not Showing (Firefox)
+- **Severity**: Low (UI/UX polish)
+- **Description**: Date input field calendar widget does not show pointer cursor on hover in Firefox
+- **Browser Support**: Confirmed broken in Firefox; behavior unknown in Safari and other browsers
+- **Attempted Fixes**:
+  - Added global CSS rules for `input[type="date"]` with `cursor: pointer`
+  - Added WebKit-specific pseudo-element styling for `::-webkit-calendar-picker-indicator`
+  - Added `cursor: pointer` to Button component base classes
+  - Implemented `showPicker()` on click (working correctly)
+- **Impact**: Calendar widget opens correctly on click, but visual cursor feedback is missing
+- **Next Steps**: May require browser-specific CSS or accept as browser limitation
+
 ---
 
-*Last updated: 2026-02-10 - Character Image Upload Epic In Progress*
+*Last updated: 2026-02-10 - Character Image Upload Epic Completed*

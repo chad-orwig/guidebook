@@ -12,7 +12,7 @@ function EditCharacter() {
     <div className="container mx-auto p-8">
       <div className="space-y-6">
         <h1 className="text-3xl font-bold">Edit Character</h1>
-        <CharacterForm mode="edit" characterId={id} />
+        <CharacterForm characterId={id} />
       </div>
     </div>
   );

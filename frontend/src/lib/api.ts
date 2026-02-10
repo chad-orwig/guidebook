@@ -5,8 +5,6 @@ import type {
   UpdateCharacter,
 } from '@guidebook/models';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
 class ApiError extends Error {
   status: number;
 
@@ -18,7 +16,7 @@ class ApiError extends Error {
 }
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(endpoint, {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
@@ -67,6 +65,40 @@ export const api = {
       }),
     delete: (id: string) =>
       fetchApi<void>(`/api/characters/${id}`, {
+        method: 'DELETE',
+      }),
+
+    // Image management endpoints
+    uploadImage: async (id: string, file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(`/api/characters/${id}/images`, {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type header, let browser set it with boundary
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        let message = 'Upload failed';
+        if (typeof errorData.error === 'string') {
+          message = errorData.error;
+        }
+        throw new ApiError(response.status, message);
+      }
+
+      return response.json() as Promise<CharacterDocument>;
+    },
+
+    setActiveImage: (id: string, filename: string) =>
+      fetchApi<CharacterDocument>(`/api/characters/${id}/images/active`, {
+        method: 'PATCH',
+        body: JSON.stringify({ filename }),
+      }),
+
+    deleteImage: (id: string, filename: string) =>
+      fetchApi<CharacterDocument>(`/api/characters/${id}/images/${filename}`, {
         method: 'DELETE',
       }),
   },

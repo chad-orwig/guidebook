@@ -9,6 +9,7 @@
     "@guidebook/models": "workspace:*",
     "@hono/zod-validator": "^0.7.6",
     "dotenv": "^17.2.3",
+    "file-type": "^21.3.0",
     "hono": "^4.11.7",
     "mongodb": "^7.0.0",
     "zod": "^3.24.1"

@@ -40,6 +40,9 @@ Thumbs.db
 # Database data (if using bind mounts)
 data/
 
+# User uploads
+uploads/
+
 # Test coverage
 coverage/
 .nyc_output/

@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { CharacterCard } from '@/components/CharacterCard';
 import { CharacterCardSkeleton } from '@/components/CharacterCardSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorDisplay } from '@/components/ErrorDisplay';
-import { useCharacters, useDeleteCharacter } from '@/hooks/useCharacters';
+import { useCharacters, useDeleteCharacter, useCreateCharacter } from '@/hooks/useCharacters';
 import { toast } from 'sonner';
 import { useState } from 'react';
 import {
@@ -17,6 +19,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export const Route = createFileRoute('/characters/')({
   component: CharacterList,
@@ -29,7 +40,11 @@ function CharacterList() {
     id: string;
     name: string;
   } | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [newCharacterName, setNewCharacterName] = useState('');
   const deleteMutation = useDeleteCharacter();
+  const createMutation = useCreateCharacter();
+  const navigate = useNavigate();
 
   const handleDelete = (id: string, name: string) => {
     setCharacterToDelete({ id, name });
@@ -58,6 +73,25 @@ function CharacterList() {
     setCharacterToDelete(null);
   };
 
+  const handleCreateCharacter = async () => {
+    if (!newCharacterName.trim()) {
+      toast.error('Character name is required');
+      return;
+    }
+
+    try {
+      const result = await createMutation.mutateAsync({ name: newCharacterName });
+      toast.success('Character created!');
+      setCreateDialogOpen(false);
+      setNewCharacterName('');
+      navigate({ to: '/characters/$id/edit', params: { id: result._id } });
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to create character';
+      toast.error(message);
+    }
+  };
+
   return (
     <div className="container mx-auto p-8">
       <div className="space-y-6">
@@ -68,9 +102,52 @@ function CharacterList() {
               Manage your characters
             </p>
           </div>
-          <Button asChild>
-            <Link to="/characters/new">New Character</Link>
-          </Button>
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>New Character</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New Character</DialogTitle>
+                <DialogDescription>
+                  Enter a name for your character. You can add more details after creation.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Character Name</Label>
+                  <Input
+                    id="name"
+                    value={newCharacterName}
+                    onChange={(e) => setNewCharacterName(e.target.value)}
+                    placeholder="Enter character name"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCreateCharacter();
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCreateDialogOpen(false);
+                    setNewCharacterName('');
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreateCharacter}
+                  disabled={createMutation.isPending || !newCharacterName.trim()}
+                >
+                  {createMutation.isPending ? 'Creating...' : 'Create'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {isLoading && (

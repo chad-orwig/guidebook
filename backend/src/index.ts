@@ -1,7 +1,9 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { serveStatic } from 'hono/bun'
 import 'dotenv/config'
 import { connectToDatabase } from '@/lib/db'
+import { initializeUploadsDir } from '@/lib/storage'
 import healthRoutes from '@/routes/health'
 import charactersRoutes from '@/routes/characters'
 import { logger } from '@/middleware/logger'
@@ -9,9 +11,12 @@ import { errorHandler } from '@/middleware/errorHandler'
 
 const app = new Hono()
 
-// Initialize database connection
-connectToDatabase().catch((error) => {
-  console.error('Failed to connect to MongoDB:', error)
+// Initialize database connection and uploads directory
+Promise.all([
+  connectToDatabase(),
+  initializeUploadsDir(),
+]).catch((error) => {
+  console.error('Failed to initialize server:', error)
   process.exit(1)
 })
 
@@ -24,6 +29,9 @@ app.use(
     credentials: true,
   })
 )
+
+// Serve static files from uploads directory (must be before routes)
+app.use('/uploads/*', serveStatic({ root: './' }))
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')

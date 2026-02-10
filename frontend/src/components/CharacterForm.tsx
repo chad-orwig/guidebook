@@ -11,7 +11,6 @@ import {
 import {
   useCharacter,
   useCharacters,
-  useCreateCharacter,
   useUpdateCharacter,
 } from '@/hooks/useCharacters';
 import { debounce, cn } from '@/lib/utils';
@@ -30,29 +29,27 @@ import { Textarea } from '@/components/ui/textarea';
 import { ColorPicker } from '@/components/ColorPicker';
 import { RelationshipField } from '@/components/RelationshipField';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ImageUpload } from '@/components/ImageUpload';
 
 interface CharacterFormProps {
-  mode: 'create' | 'edit';
-  characterId?: string;
+  characterId: string;
 }
 
-export function CharacterForm({ mode, characterId }: CharacterFormProps) {
+export function CharacterForm({ characterId }: CharacterFormProps) {
   const navigate = useNavigate();
 
-  const { data: character, isLoading: isLoadingCharacter } = useCharacter(
-    characterId || ''
-  );
+  const { data: character, isLoading: isLoadingCharacter } = useCharacter(characterId);
 
   const { data: allCharacters = [] } = useCharacters();
   const availableCharacters = allCharacters.filter(
     (char) => char._id !== characterId
   );
 
-  const createMutation = useCreateCharacter();
-  const updateMutation = useUpdateCharacter(characterId || '');
+  const updateMutation = useUpdateCharacter(characterId);
 
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [imageError, setImageError] = useState(false);
 
   const form = useForm<CreateCharacter>({
     resolver: zodResolver(CreateCharacterSchema),
@@ -68,7 +65,7 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
   });
 
   useEffect(() => {
-    if (mode === 'edit' && character) {
+    if (character) {
       form.reset({
         name: character.name,
         creationDate: character.creationDate?.split('T')[0],
@@ -79,28 +76,26 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
         relationships: character.relationships || [],
       });
     }
-  }, [character, mode, form]);
+  }, [character, form]);
 
   const debouncedSave = useMemo(
     () =>
       debounce(async (data: UpdateCharacter) => {
-        if (mode === 'edit') {
-          setIsSaving(true);
-          try {
-            await updateMutation.mutateAsync(data);
-            setLastSaved(new Date());
-          } catch (error) {
-            // Silently fail autosave
-          } finally {
-            setIsSaving(false);
-          }
+        setIsSaving(true);
+        try {
+          await updateMutation.mutateAsync(data);
+          setLastSaved(new Date());
+        } catch {
+          // Silently fail autosave
+        } finally {
+          setIsSaving(false);
         }
       }, 300),
-    [mode, updateMutation]
+    [updateMutation]
   );
 
   const handleFieldBlur = () => {
-    if (mode === 'edit' && form.formState.isValid) {
+    if (form.formState.isValid) {
       const data = form.getValues();
       debouncedSave(data);
     }
@@ -108,13 +103,8 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
 
   const onSubmit = async (data: CreateCharacter) => {
     try {
-      if (mode === 'create') {
-        await createMutation.mutateAsync(data);
-        toast.success('Character created!');
-      } else {
-        await updateMutation.mutateAsync(data);
-        toast.success('Character updated!');
-      }
+      await updateMutation.mutateAsync(data);
+      toast.success('Character updated!');
       navigate({ to: '/characters' });
     } catch (error) {
       const message = error instanceof Error
@@ -127,7 +117,7 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
     }
   };
 
-  if (mode === 'edit' && isLoadingCharacter) {
+  if (isLoadingCharacter) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-full" />
@@ -138,17 +128,56 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
     );
   }
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {mode === 'edit' && (
-          <div className="text-sm text-muted-foreground">
-            {isSaving && 'Saving...'}
-            {lastSaved && !isSaving && `Saved at ${lastSaved.toLocaleTimeString()}`}
-          </div>
-        )}
+  if (!character) {
+    return <div>Character not found</div>;
+  }
 
-        <FormField
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Left column: Image section */}
+      <div className="lg:col-span-1 space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Character Image</h3>
+
+          {/* Large active image display */}
+          <div className="relative w-full aspect-square bg-muted rounded-lg overflow-hidden flex items-center justify-center">
+            {character.activeImage && !imageError ? (
+              <img
+                src={`/uploads/characters/${characterId}/${character.activeImage}`}
+                alt={character.name}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="text-8xl text-muted-foreground">
+                {character.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          {/* Image upload component with thumbnails */}
+          <ImageUpload
+            characterId={characterId}
+            images={character.images || []}
+            activeImage={character.activeImage}
+            onUploadComplete={() => {
+              // Refetch will happen automatically via mutation invalidation
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Right column: Form fields */}
+      <div className="lg:col-span-2">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Auto-save indicator */}
+            <div className="text-sm text-muted-foreground">
+              {isSaving && 'Saving...'}
+              {lastSaved && !isSaving && `Saved at ${lastSaved.toLocaleTimeString()}`}
+            </div>
+
+            <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
@@ -179,6 +208,10 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
                 <Input
                   {...field}
                   type="date"
+                  onClick={(e) => {
+                    const input = e.currentTarget as HTMLInputElement;
+                    input.showPicker?.();
+                  }}
                   onBlur={() => {
                     field.onBlur();
                     handleFieldBlur();
@@ -317,20 +350,22 @@ export function CharacterForm({ mode, characterId }: CharacterFormProps) {
           />
         )}
 
-        <div className="flex gap-2">
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {mode === 'create' ? 'Create Character' : 'Save Changes'}
-          </Button>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                Save Changes
+              </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate({ to: '/characters' })}
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
-    </Form>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate({ to: '/characters' })}
+              >
+                Back to List
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }

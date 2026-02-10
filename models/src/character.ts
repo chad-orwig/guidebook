@@ -57,7 +57,7 @@ export const CharacterRelationshipSchema = z.object({
 });
 
 // Base character schema (domain model, no _id)
-export const CharacterSchema = z.object({
+const CharacterBaseSchema = z.object({
   name: z.string().min(1),
   creationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   species: z.string().optional(),
@@ -65,16 +65,52 @@ export const CharacterSchema = z.object({
   primaryColor: TailwindColorSchema.optional(),
   secondaryColors: z.array(TailwindColorSchema).optional(),
   relationships: z.array(CharacterRelationshipSchema).optional(),
+  images: z.array(z.string()).max(20).optional(),
+  activeImage: z.string().optional(),
 });
 
-// Derived schemas
-export const CharacterDocumentSchema = CharacterSchema.extend({
+// Character schema with validation refinement
+export const CharacterSchema = CharacterBaseSchema.refine(
+  (data) => {
+    // If activeImage is set, it must exist in images array
+    if (data.activeImage && data.images) {
+      return data.images.includes(data.activeImage);
+    }
+    // If activeImage is set but no images array, invalid
+    if (data.activeImage && !data.images) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "activeImage must be one of the images in the images array",
+    path: ["activeImage"],
+  }
+);
+
+// Derived schemas (use base schema to maintain .extend() and .partial() methods)
+export const CharacterDocumentSchema = CharacterBaseSchema.extend({
   _id: z.string(), // MongoDB ObjectId as hex string
-});
+}).refine(
+  (data) => {
+    // Apply same validation to documents
+    if (data.activeImage && data.images) {
+      return data.images.includes(data.activeImage);
+    }
+    if (data.activeImage && !data.images) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "activeImage must be one of the images in the images array",
+    path: ["activeImage"],
+  }
+);
 
-export const CreateCharacterSchema = CharacterSchema;
+export const CreateCharacterSchema = CharacterBaseSchema;
 
-export const UpdateCharacterSchema = CharacterSchema.partial();
+export const UpdateCharacterSchema = CharacterBaseSchema.partial();
 
 // Character list item schema (minimal data for list view)
 export const CharacterListItemSchema = z.object({
@@ -83,6 +119,7 @@ export const CharacterListItemSchema = z.object({
   species: z.string().optional(),
   creationDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   primaryColor: TailwindColorSchema.optional(),
+  activeImage: z.string().optional(),
 });
 
 export type CharacterListItem = z.infer<typeof CharacterListItemSchema>;

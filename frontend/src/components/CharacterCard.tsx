@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { CharacterListItem } from '@guidebook/models';
@@ -20,14 +21,42 @@ interface CharacterCardProps {
 
 export function CharacterCard({ character, onDelete }: CharacterCardProps) {
   const colorClasses = getColorClasses(character.primaryColor);
+  const [imageError, setImageError] = useState(false);
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
+      {/* Active image or placeholder - clickable to edit */}
+      <Link
+        to="/characters/$id/edit"
+        params={{ id: character._id }}
+        className="relative block w-full aspect-square bg-muted flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity"
+      >
+        {character.activeImage && !imageError ? (
+          <img
+            src={`/uploads/characters/${character._id}/${character.activeImage}`}
+            alt={character.name}
+            className="w-full h-full object-cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="text-6xl text-muted-foreground">
+            {character.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+
+        {/* Color indicator overlay */}
+        {character.primaryColor && (
+          <div
+            className={cn(
+              'absolute top-2 right-2 size-3 rounded-full',
+              colorClasses
+            )}
+          />
+        )}
+      </Link>
+
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <div className={cn('size-3 rounded-full flex-shrink-0', colorClasses)} />
-          <span className="truncate">{character.name}</span>
-        </CardTitle>
+        <CardTitle className="truncate">{character.name}</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-2">

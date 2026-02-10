@@ -6,12 +6,12 @@ This epic adds image upload and management functionality for character profiles.
 
 ## Tasks
 
-- [ ] Update character model for image tracking
-- [ ] Set up filesystem storage and cleanup
-- [ ] Create image upload API endpoint
-- [ ] Create image management API endpoints
-- [ ] Build image upload UI component
-- [ ] Implement image display and selection
+- [x] Update character model for image tracking
+- [x] Set up filesystem storage and cleanup
+- [x] Create image upload API endpoint
+- [x] Create image management API endpoints
+- [x] Build image upload UI component
+- [x] Implement image display and selection
 
 ## Task Details
 
