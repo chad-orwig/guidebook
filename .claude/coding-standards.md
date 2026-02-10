@@ -18,6 +18,14 @@
 
 ## Frontend
 
+### Styling
+
+- Do not reference colors directly.
+  - Use the Shadcn named colors
+  - If more Colors are needed add them to the theme
+  - reference: https://ui.shadcn.com/docs/theming
+- Keep tailwind classes simple where possible
+
 ### Adding UI Components
 - Use `bunx --bun shadcn@latest add <component>` to add shadcn/ui components
 - Run from the `frontend/` directory
