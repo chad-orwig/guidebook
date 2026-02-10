@@ -30,15 +30,19 @@
 
 ## In Progress
 
-## Not Started
-
 ### Character Image Upload
 - Images stored in filesystem directories matching character MongoDB ID
 - Support multiple images per character for swapping
 - Delete directory when character is deleted
+- Max 20 images per character, 15MB file size limit
+- Magic byte validation for file types
+- Modal-based character creation flow
+- Epic: [character-image-upload.md](epics/character-image-upload.md)
+
+## Not Started
 
 ### Guidebook Viewer Interface
 
 ---
 
-*Last updated: 2026-02-09 - Character Management UI Epic Complete*
+*Last updated: 2026-02-10 - Character Image Upload Epic In Progress*
