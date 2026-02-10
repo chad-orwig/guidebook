@@ -6,6 +6,7 @@ import {
   CreateCharacterSchema,
   UpdateCharacterSchema,
   type CharacterDocument,
+  type CharacterListItem,
 } from '@guidebook/models';
 import { getDatabase } from '@/lib/db';
 
@@ -63,13 +64,24 @@ app.get('/', zValidator('query', ListQuerySchema), async (c) => {
   }
 
   const characters = await collection
-    .find({}, { projection: { _id: 1, name: 1 } })
+    .find({}, {
+      projection: {
+        _id: 1,
+        name: 1,
+        species: 1,
+        creationDate: 1,
+        primaryColor: 1,
+      },
+    })
     .sort(sort)
     .toArray();
 
-  const result = characters.map((char) => ({
+  const result: CharacterListItem[] = characters.map((char) => ({
     _id: char._id.toString(),
     name: char.name,
+    species: char.species,
+    creationDate: char.creationDate,
+    primaryColor: char.primaryColor,
   }));
 
   return c.json(result, 200);
