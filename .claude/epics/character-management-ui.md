@@ -10,7 +10,7 @@ This epic builds the frontend interface for managing characters in the guidebook
 - [x] Set up character management routes
 - [x] Create character list page
 - [x] Create character form (create/edit)
-- [ ] Implement character deletion
+- [x] Implement character deletion
 
 ## Task Details
 

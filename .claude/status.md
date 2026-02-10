@@ -19,6 +19,15 @@
 - ✅ CORS configuration
 - Epic: [backend-api.md](epics/backend-api.md)
 
+### Character Management UI
+- ✅ Landing page with navigation
+- ✅ Character list page with card display
+- ✅ Character form for create/edit with autosave
+- ✅ Character deletion with confirmation dialog
+- ✅ Form validation and error handling
+- ✅ Loading states and toast notifications
+- Epic: [character-management-ui.md](epics/character-management-ui.md)
+
 ## In Progress
 
 ## Not Started
@@ -28,9 +37,8 @@
 - Support multiple images per character for swapping
 - Delete directory when character is deleted
 
-### Character Management UI
 ### Guidebook Viewer Interface
 
 ---
 
-*Last updated: 2026-02-09 - Backend API Epic Complete*
+*Last updated: 2026-02-09 - Character Management UI Epic Complete*
