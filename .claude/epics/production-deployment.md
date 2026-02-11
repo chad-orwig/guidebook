@@ -6,7 +6,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 
 ## Tasks
 
-- [ ] Frontend Docker Image
+- [x] Frontend Docker Image
 - [ ] Backend Docker Image
 - [ ] Kubernetes Manifest Spike
 - [ ] Kustomize Templates
@@ -15,7 +15,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 
 ## Task Details
 
-### 1. Frontend Docker Image
+### 1. Frontend Docker Image ✅
 
 **Requirements:**
 - Build production-optimized React SPA
@@ -25,6 +25,14 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Health check endpoint for k8s probes
 - Run as non-root user for security
 - Proper handling of SPA routing (fallback to index.html)
+
+**Completed Notes:**
+- Build from workspace root: `docker build -f frontend/Dockerfile -t guidebook-frontend:latest .`
+- Copy all workspace package.json files, use `--filter frontend --filter models` for install
+- Bun lockfile is `bun.lock` (not `bun.lockb`)
+- .dockerignore at workspace root, don't exclude tsconfig/vite.config files
+- Caddy requires `handle` blocks for proper routing order (API proxy before static files)
+- Auth client uses `window.location.origin` for environment flexibility
 
 ### 2. Backend Docker Image
 

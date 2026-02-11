@@ -88,10 +88,6 @@ function ProfilePage() {
               <Label>Username</Label>
               <p className="text-sm text-muted-foreground mt-1">{session.user.username}</p>
             </div>
-            <div>
-              <Label>Role</Label>
-              <p className="text-sm text-muted-foreground mt-1 capitalize">{session.user.role}</p>
-            </div>
           </CardContent>
         </Card>
 

@@ -1,0 +1,71 @@
+# Dependencies
+**/node_modules
+**/.pnpm-store
+**/.turbo
+
+# Build outputs
+frontend/dist
+backend/dist
+models/dist
+
+# Development caches
+**/.vite
+**/.next
+**/.nuxt
+
+# IDE files
+.vscode
+.idea
+**/*.swp
+**/*.swo
+**/*.swn
+
+# OS files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+
+# Logs
+**/*.log
+**/npm-debug.log*
+**/pnpm-debug.log*
+**/bun-debug.log*
+
+# Environment files (will be injected via k8s ConfigMap/Secret)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Git
+.git
+.gitignore
+**/.gitignore
+
+# Testing
+**/coverage
+**/.nyc_output
+
+# Documentation (not needed in images)
+**/*.md
+!README.md
+
+# Docker
+**/Dockerfile
+**/.dockerignore
+**/docker-compose*.yml
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.circleci
+
+# Kubernetes and deployment files (not needed in images)
+k8s/
+deploy/
+scripts/
+
+# Misc development files
+**/.eslintrc*
+**/eslint.config.*
+**/.prettierrc*
+**/prettier.config.*

@@ -1,0 +1,42 @@
+:80 {
+	# Log access
+	log {
+		output stdout
+		format console
+	}
+
+	# Enable gzip compression
+	encode gzip
+
+	# Security headers
+	header {
+		# Prevent XSS attacks
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	# Reverse proxy for API requests (for local Docker testing with dev backend)
+	# In production, ingress will handle routing instead
+	@api {
+		path /api/*
+	}
+	handle @api {
+		reverse_proxy host.docker.internal:3000
+	}
+
+	@uploads {
+		path /uploads/*
+	}
+	handle @uploads {
+		reverse_proxy host.docker.internal:3000
+	}
+
+	# Serve static files for everything else
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
