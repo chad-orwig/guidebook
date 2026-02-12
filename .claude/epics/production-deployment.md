@@ -9,7 +9,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - [x] Frontend Docker Image
 - [x] Backend Docker Image
 - [x] Kubernetes Manifest Spike
-- [ ] Kustomize Templates
+- [x] Kustomize Templates
 - [ ] Deployment Scripts
 - [ ] Deployment Documentation
 
@@ -99,7 +99,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - **Health probes**: Based on docker-compose healthchecks, frontend on `/`, backend on `/health`
 - **Resource limits**: Conservative starting values (can tune based on actual usage)
 
-### 4. Kustomize Templates
+### 4. Kustomize Templates ✅
 
 **Requirements:**
 - Convert spike manifests to Kustomize structure
@@ -110,6 +110,21 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Namespace configuration
 - Label and annotation standardization
 - Easy customization for different deployments
+
+**Completed Notes:**
+- Kustomize v5.8.1 installed via Homebrew for standalone usage
+- Base layer: `k8s/base/` with common resources (namespace, deployment, services, ingress)
+- Production overlay: `k8s/overlays/production/` with generators and image management
+- ConfigMapGenerator creates from `env.properties` (non-sensitive config)
+- SecretGenerator creates from `.env.secret` (gitignored, actual credentials copied from spike)
+- Hash suffixes disabled (`disableNameSuffixHash: true`) due to Kustomize bug with `envFrom` references
+- Manual rollout restart required after config changes
+- Labels properly configured: `app: guidebook` on all resources for prune compatibility
+- Used `labels` instead of `commonLabels` to avoid immutable selector issues
+- Deployment script (`prepare-manifests.ts`) uses `kustomize build` to generate manifests
+- Script copies manifests to SMB share at `/Volumes/guidebook/manifests/`
+- Generates TrueNAS deployment script with `--prune` for automatic resource cleanup
+- Spike directory removed after successful Kustomize conversion
 
 ### 5. Deployment Scripts
 

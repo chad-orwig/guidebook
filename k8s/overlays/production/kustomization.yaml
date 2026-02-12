@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+configMapGenerator:
+  - name: guidebook-env
+    envs:
+      - env.properties
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app: guidebook
+        environment: production
+
+secretGenerator:
+  - name: guidebook-secrets
+    envs:
+      - .env.secret
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app: guidebook
+        environment: production
+
+images:
+  - name: edgethio/guidebook-frontend
+    newTag: latest
+  - name: edgethio/guidebook-backend
+    newTag: latest
+
+labels:
+  - pairs:
+      environment: production

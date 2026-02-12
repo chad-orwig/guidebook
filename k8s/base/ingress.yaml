@@ -1,0 +1,55 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: guidebook-ingress
+  labels:
+    app: guidebook
+  annotations:
+    # Traefik ingress class (default in TrueNAS Scale k3s)
+    kubernetes.io/ingress.class: traefik
+
+    # Traefik TLS configuration
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+    # cert-manager annotation for automatic TLS certificate provisioning
+    cert-manager.io/cluster-issuer: main
+
+    # Redirect HTTP to HTTPS
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  tls:
+    - hosts:
+        - guidebook.orwig.app
+      secretName: guidebook-tls-cert
+  rules:
+    - host: guidebook.orwig.app
+      http:
+        paths:
+          # API requests go to backend
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: guidebook-backend
+                port:
+                  number: 3000
+
+          # Upload requests go to backend
+          - path: /uploads
+            pathType: Prefix
+            backend:
+              service:
+                name: guidebook-backend
+                port:
+                  number: 3000
+
+          # Everything else goes to frontend (must be last for proper precedence)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: guidebook-frontend
+                port:
+                  number: 80

@@ -57,7 +57,7 @@
 ### Production Deployment
 - ✅ Docker images for frontend (Bun + Caddy) and backend (Bun)
 - ✅ Kubernetes manifests for TrueNAS Scale k3s deployment (Deployment, Services, Ingress, ConfigMap, Secret)
-- 🚧 Kustomize templates for repeatable deployments
+- ✅ Kustomize templates for repeatable deployments (base + production overlay)
 - 🚧 Deployment scripts and documentation
 - Epic: [production-deployment.md](epics/production-deployment.md)
 
@@ -81,4 +81,4 @@
 
 ---
 
-*Last updated: 2026-02-11 - Kubernetes Manifest Spike Completed*
+*Last updated: 2026-02-12 - Kustomize Templates Completed*

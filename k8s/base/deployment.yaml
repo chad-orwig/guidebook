@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guidebook-app
+  labels:
+    app: guidebook
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # Use Recreate since we have hostPath volumes
+  selector:
+    matchLabels:
+      app: guidebook
+      component: app
+  template:
+    metadata:
+      labels:
+        app: guidebook
+        component: app
+    spec:
+      # Containers share network namespace (communicate via localhost)
+      containers:
+        # Frontend Container (Caddy serving React SPA)
+        - name: frontend
+          image: edgethio/guidebook-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+        # Backend Container (Bun + Hono API)
+        - name: backend
+          image: edgethio/guidebook-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: api
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: guidebook-env
+            - secretRef:
+                name: guidebook-secrets
+          volumeMounts:
+            - name: images-storage
+              mountPath: /app/uploads
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+        # MongoDB Container
+        - name: mongodb
+          image: mongo:8
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+              name: mongodb
+              protocol: TCP
+          env:
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: guidebook-env
+                  key: MONGO_INITDB_DATABASE
+          volumeMounts:
+            - name: mongodb-storage
+              mountPath: /data/db
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - db.adminCommand('ping')
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+      # Volumes for persistent storage
+      volumes:
+        # MongoDB data persistence
+        - name: mongodb-storage
+          hostPath:
+            path: /mnt/pool/guidebook/mongo
+            type: DirectoryOrCreate
+
+        # Character images persistence
+        - name: images-storage
+          hostPath:
+            path: /mnt/pool/guidebook/images
+            type: DirectoryOrCreate

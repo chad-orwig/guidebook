@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: guidebook-backend
+  labels:
+    app: guidebook
+    component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: guidebook
+    component: app
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: api
