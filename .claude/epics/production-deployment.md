@@ -8,7 +8,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 
 - [x] Frontend Docker Image
 - [x] Backend Docker Image
-- [ ] Kubernetes Manifest Spike
+- [x] Kubernetes Manifest Spike
 - [ ] Kustomize Templates
 - [ ] Deployment Scripts
 - [ ] Deployment Documentation
@@ -57,7 +57,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Added `docker:mongo` and `docker:mongo-down` scripts for running only MongoDB in dev mode
 - Bun handles graceful shutdown signals by default
 
-### 3. Kubernetes Manifest Spike
+### 3. Kubernetes Manifest Spike ✅
 
 **Requirements:**
 - Single Pod with 3 containers (frontend, backend, mongodb)
@@ -72,6 +72,32 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Liveness and readiness probes for frontend and backend
 - Proper container port configuration
 - Verify all components work together
+
+**Completed Notes:**
+- **Deployment vs Pod**: Converted from bare Pod to Deployment for better management (auto-restart, rollout capabilities)
+- **Multi-platform images**: Required for AMD64 TrueNAS server when building on ARM Mac
+  - Use Docker buildx with `--platform linux/amd64,linux/arm64`
+  - Created `docker:push` script for multi-platform builds
+  - Created `docker:push-amd64` script for Colima users without buildx setup
+- **Docker Hub**: Images must be pushed to Docker Hub (or similar registry) - k3s pulls from registry, not local images
+- **HostPath permissions**: Critical issue - hostPath volumes need correct ownership for non-root containers
+  - Backend runs as uid 1001 (`appuser`) - `/mnt/pool/guidebook/images` must be owned by 1001:1001
+  - MongoDB runs as uid 999 - `/mnt/pool/guidebook/mongo` must be owned by 999:999
+  - Use `sudo chown -R <uid>:<gid>` and `sudo chmod -R 755` on TrueNAS host
+- **Traefik annotations**:
+  - ClusterIssuer name is `main` (not `letsencrypt-prod`)
+  - Use `traefik.ingress.kubernetes.io/router.entrypoints: websecure` for HTTPS
+  - Use `cert-manager.io/cluster-issuer: main` for automatic TLS cert provisioning
+- **Network topology**: Multi-container pod - containers share network namespace (localhost communication)
+  - MongoDB at `localhost:27017` from backend perspective
+  - No separate MongoDB service needed (would only add complexity)
+- **ConfigMap values**:
+  - MONGODB_URI uses `localhost:27017` (not service name)
+  - BETTER_AUTH_URL must include full path `/api/auth`
+  - BETTER_AUTH_TRUSTED_ORIGINS must match ingress hostname
+- **Deployment strategy**: Uses `Recreate` (not `RollingUpdate`) due to hostPath volumes - only one pod can mount them at a time
+- **Health probes**: Based on docker-compose healthchecks, frontend on `/`, backend on `/health`
+- **Resource limits**: Conservative starting values (can tune based on actual usage)
 
 ### 4. Kustomize Templates
 

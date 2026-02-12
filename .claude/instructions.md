@@ -18,3 +18,4 @@
 ## Project Context
 - See [overview.md](overview.md) for project details
 - See [tech-stack.md](tech-stack.md) for technical architecture and deployment
+- See [status.md](status.md) for current project status
