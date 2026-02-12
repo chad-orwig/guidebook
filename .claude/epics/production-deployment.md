@@ -10,8 +10,8 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - [x] Backend Docker Image
 - [x] Kubernetes Manifest Spike
 - [x] Kustomize Templates
-- [ ] Deployment Scripts
-- [ ] Deployment Documentation
+- [x] Deployment Scripts
+- [x] Deployment Documentation
 
 ## Task Details
 
@@ -126,7 +126,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Generates TrueNAS deployment script with `--prune` for automatic resource cleanup
 - Spike directory removed after successful Kustomize conversion
 
-### 5. Deployment Scripts
+### 5. Deployment Scripts ✅
 
 **Requirements:**
 - Build both Docker images with proper tagging
@@ -137,7 +137,19 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Clear instructions output for manual TrueNAS steps
 - Clear error messages and logging
 
-### 6. Deployment Documentation
+**Completed Notes:**
+- Created `scripts/prepare-manifests.ts` using Bun's native TypeScript support
+- Script runs `kustomize build k8s/overlays/production` to generate manifests
+- Verifies SMB share is mounted at `/Volumes/guidebook/manifests`
+- Clears existing manifests directory before writing new files
+- Writes generated manifests to `manifests.yaml`
+- Generates executable `deploy.sh` script for TrueNAS with k3s kubectl commands
+- Deploy script uses `--prune -l app=guidebook` for automatic resource cleanup
+- Added `deploy:prepare` command to root package.json
+- Includes clear error handling and user-friendly console output
+- Outputs next steps instructions after successful preparation
+
+### 6. Deployment Documentation ✅
 
 **Requirements:**
 - Prerequisites (k3s access, kubectl, kustomize, docker)
@@ -151,6 +163,23 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Configuration reference for environment variables
 - How to view logs and debug issues
 - Backup and restore procedures for MongoDB data
+
+**Completed Notes:**
+- Created comprehensive `DEPLOYMENT.md` at repository root
+- Documented all prerequisites for local machine and TrueNAS server
+- Initial setup includes directory creation and permission configuration
+- Complete 3-step deployment workflow (build images, prepare manifests, deploy)
+- Verification steps for pods, services, ingress, and application access
+- Update procedures for code, configuration, and secrets
+- Troubleshooting section covers common issues (pod failures, volumes, ingress, ConfigMap/Secret)
+- Configuration reference tables for all environment variables and secrets
+- Logging and debugging commands (logs, shell access, resource usage)
+- Backup and restore procedures for both MongoDB and character images
+- Complete teardown instructions for clean removal
+- Architecture notes explaining multi-container pod design and trade-offs
+- Storage section covering hostPath volumes and ownership requirements
+- Security notes on non-root containers, secrets management, and TLS
+- Quick reference section with common command examples
 
 ## Implementation Details
 

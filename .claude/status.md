@@ -52,14 +52,15 @@
 - ✅ Route protection via TanStack Router `beforeLoad` hooks
 - Epic: [admin-authentication.md](epics/admin-authentication.md)
 
-## In Progress
-
 ### Production Deployment
 - ✅ Docker images for frontend (Bun + Caddy) and backend (Bun)
-- ✅ Kubernetes manifests for TrueNAS Scale k3s deployment (Deployment, Services, Ingress, ConfigMap, Secret)
-- ✅ Kustomize templates for repeatable deployments (base + production overlay)
-- 🚧 Deployment scripts and documentation
+- ✅ Kubernetes manifests for TrueNAS Scale k3s deployment
+- ✅ Kustomize templates with base and production overlay structure
+- ✅ Deployment preparation script (`bun run deploy:prepare`)
+- ✅ Comprehensive deployment documentation (DEPLOYMENT.md)
 - Epic: [production-deployment.md](epics/production-deployment.md)
+
+## In Progress
 
 ## Not Started
 
@@ -81,4 +82,4 @@
 
 ---
 
-*Last updated: 2026-02-12 - Kustomize Templates Completed*
+*Last updated: 2026-02-12 - Production Deployment Epic Completed*
