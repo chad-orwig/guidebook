@@ -1,0 +1,46 @@
+:80 {
+	# Log access
+	log {
+		output stdout
+		format console
+	}
+
+	# Enable gzip compression
+	encode gzip
+
+	# Security headers
+	header {
+		# Prevent XSS attacks
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+
+	# Reverse proxy for API requests to backend service
+	@api {
+		path /api/*
+	}
+	handle @api {
+		reverse_proxy backend:3000 {
+			header_up Host {host}
+			header_up X-Real-IP {remote_host}
+			header_up X-Forwarded-For {remote_host}
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	@uploads {
+		path /uploads/*
+	}
+	handle @uploads {
+		reverse_proxy backend:3000
+	}
+
+	# Serve static files for everything else
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

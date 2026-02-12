@@ -7,7 +7,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 ## Tasks
 
 - [x] Frontend Docker Image
-- [ ] Backend Docker Image
+- [x] Backend Docker Image
 - [ ] Kubernetes Manifest Spike
 - [ ] Kustomize Templates
 - [ ] Deployment Scripts
@@ -34,7 +34,7 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Caddy requires `handle` blocks for proper routing order (API proxy before static files)
 - Auth client uses `window.location.origin` for environment flexibility
 
-### 2. Backend Docker Image
+### 2. Backend Docker Image ✅
 
 **Requirements:**
 - Production Bun runtime environment
@@ -44,6 +44,18 @@ This epic will establish a repeatable deployment process for running the Guidebo
 - Run as non-root user for security
 - Environment variable configuration support
 - Proper signal handling for graceful shutdown
+
+**Completed Notes:**
+- Build from workspace root: `docker build -f backend/Dockerfile -t guidebook-backend:latest .`
+- Multi-stage build using `oven/bun:1` for both stages (slim variant lacks user management tools)
+- No HEALTHCHECK in Dockerfile - use k8s probes in prod, docker-compose healthchecks for local testing
+- Health endpoint exists at `/health` for k8s readiness/liveness probes
+- Run as non-root user `appuser` (uid 1001) for security
+- Better Auth `baseURL` must include full path (`/api/auth`), not just origin
+- Better Auth requires `trustedOrigins` configuration for proxied requests
+- Docker-compose setup: MongoDB (named volume), backend (bind mount for uploads to share with dev mode)
+- Added `docker:mongo` and `docker:mongo-down` scripts for running only MongoDB in dev mode
+- Bun handles graceful shutdown signals by default
 
 ### 3. Kubernetes Manifest Spike
 

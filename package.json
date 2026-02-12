@@ -7,7 +7,14 @@
     "dev:backend": "bun run --filter backend dev",
     "lint": "bun run --filter frontend lint && bun run --filter backend lint",
     "format": "bun run --filter frontend format && bun run --filter backend format",
-    "docker:build-frontend": "docker build -f frontend/Dockerfile -t guidebook-frontend:latest ."
+    "docker:build-frontend": "docker build -f frontend/Dockerfile -t guidebook-frontend:latest .",
+    "docker:build-backend": "docker build -f backend/Dockerfile -t guidebook-backend:latest .",
+    "docker:build-all": "bun run docker:build-frontend && bun run docker:build-backend",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:mongo": "docker-compose up -d mongodb",
+    "docker:mongo-down": "docker-compose stop mongodb"
   },
   "workspaces": [
     "frontend",
