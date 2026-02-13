@@ -66,9 +66,16 @@
 
 ## In Progress
 
-## Not Started
-
 ### Guidebook Viewer Interface
+- 🔄 Epic planning complete, ready for implementation
+- Interactive book interface using react-pageflip
+- Character image and info pages with lazy loading
+- Table of contents with navigation
+- Keyboard and touch controls
+- Responsive design for mobile and desktop
+- Epic: [guidebook-viewer-interface.md](epics/guidebook-viewer-interface.md)
+
+## Not Started
 
 ## Known Bugs
 
@@ -86,4 +93,4 @@
 
 ---
 
-*Last updated: 2026-02-13 - UI Polish Epic Completed*
+*Last updated: 2026-02-13 - Guidebook Viewer Interface Epic Planned*
