@@ -29,7 +29,7 @@ async function main() {
   const kustomizationContent = fs.readFileSync(KUSTOMIZATION_FILE, "utf-8");
   const updatedKustomization = kustomizationContent.replace(
     /newTag: .*/g,
-    `newTag: ${gitHash}`
+    `newTag: "${gitHash}"`
   );
   fs.writeFileSync(KUSTOMIZATION_FILE, updatedKustomization);
   console.log("✅ Kustomization updated\n");
