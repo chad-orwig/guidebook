@@ -25,6 +25,7 @@
     "models"
   ],
   "devDependencies": {
+    "@peterek/vite-plugin-favicons": "^2.1.0",
     "concurrently": "^9.2.1",
     "prettier": "^3.8.1"
   }

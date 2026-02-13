@@ -6,12 +6,11 @@ This epic focuses on professional polish and refinement across three key areas. 
 
 ## Tasks
 
-- [ ] Implement favicons
-- [ ] Fix page title and basic meta tags
-- [ ] Update color palette
-- [ ] Update typography and fonts
-- [ ] Create site navigation map
-- [ ] Implement navigation enhancements
+- [x] Implement favicons
+- [x] Fix page title and basic meta tags
+- [x] Update color palette
+- [x] Update typography and fonts
+- [x] Redesign landing page and navigation
 
 ## Task Details
 
@@ -82,34 +81,46 @@ This epic focuses on professional polish and refinement across three key areas. 
 - Update base styles or components to use new font families
 - Test font rendering across all pages and components
 
-### 5. Create site navigation map
+### 5. Redesign landing page and navigation
+
+#### Application Structure
+The app has three main sections:
+1. **Guidebook** (landing page) - Browse characters (public access)
+2. **Profile** - Change password (requires login)
+3. **Manage** - Create/edit characters (requires login)
+
+#### Navigation Plan
+
+**When NOT logged in:**
+- Landing page shows guidebook (title only for now - viewer not yet designed)
+- Small, unobtrusive login button with `LogIn` icon
+
+**When logged in:**
+- Logout button with `LogOut` icon
+- Three icon-only navigation buttons to navigate between sections:
+  - **Guidebook**: `BookOpenText` icon - browse/view characters
+  - **Profile**: `User` icon - change password
+  - **Manage**: `Wrench` icon - create/edit characters
+- Only show buttons for the OTHER two sections (not current section)
 
 #### Requirements
-- Map all existing pages and routes in the application
-- Document current navigation flows
-- Identify gaps where pages aren't reachable or flow is unclear
-- Design logical navigation structure and user flows
-- Create sitemap showing how all pages connect
+- Update landing page (/) to be guidebook viewer (show title for now)
+- Create icon-only navigation component
+- Use lucide-react icons:
+  - Login: `LogIn`
+  - Logout: `LogOut`
+  - Profile: `User`
+  - Manage: `Wrench`
+  - Guidebook: `BookOpenText`
+- Position navigation unobtrusively (corner or edge)
+- Show/hide navigation based on auth state and current route
+- Ensure buttons only show for sections user isn't currently in
 
 #### Implementation
-- List all existing pages/routes in the application
-- Design ideal navigation structure from user's perspective
-- Create sitemap showing desired page hierarchy and connections
-- Define navigation elements needed (nav bar, breadcrumbs, back buttons, etc.)
-- Document the navigation design in epic file or separate diagram
-
-### 6. Implement navigation enhancements
-
-#### Requirements
-- Add missing navigation links based on sitemap
-- Implement breadcrumbs or back buttons where needed
-- Ensure all sections of the site are reachable
-- Verify logical user flow matches the designed sitemap
-
-#### Implementation
-- Implement navigation components based on sitemap design from Task 5
-- Update layout components to include navigation elements
-- Add TanStack Router `<Link>` components for navigation
-- Implement nav bar, breadcrumbs, or back buttons as designed
-- Test all navigation flows to ensure pages are reachable
-- Verify navigation matches the designed sitemap
+- Update landing page route (/) to show guidebook placeholder
+- Create NavigationButtons component with icon-only buttons
+- Import lucide-react icons: `LogIn`, `LogOut`, `User`, `Wrench`, `BookOpenText`
+- Add conditional rendering based on auth state and current route
+- Position navigation in fixed corner (top-right suggested)
+- Style buttons to be small and unobtrusive
+- Test navigation flow between all three sections

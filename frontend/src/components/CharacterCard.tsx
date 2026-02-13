@@ -24,7 +24,7 @@ export function CharacterCard({ character, onDelete }: CharacterCardProps) {
   const [imageError, setImageError] = useState(false);
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden pt-0">
       {/* Active image or placeholder - clickable to edit */}
       <Link
         to="/characters/$id/edit"
@@ -75,7 +75,7 @@ export function CharacterCard({ character, onDelete }: CharacterCardProps) {
       </CardContent>
 
       <CardFooter className="gap-2">
-        <Button asChild variant="outline" size="sm" className="flex-1">
+        <Button asChild variant="secondary" size="sm" className="flex-1">
           <Link to="/characters/$id/edit" params={{ id: character._id }}>
             <Pencil />
             Edit
@@ -83,7 +83,7 @@ export function CharacterCard({ character, onDelete }: CharacterCardProps) {
         </Button>
 
         <Button
-          variant="outline"
+          variant="destructive"
           size="sm"
           className="flex-1"
           onClick={() => onDelete(character._id)}

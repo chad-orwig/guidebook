@@ -26,7 +26,7 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
           </span>
           <Button
             type="button"
-            variant="outline"
+            variant="destructive"
             size="sm"
             onClick={() => onChange(undefined)}
           >

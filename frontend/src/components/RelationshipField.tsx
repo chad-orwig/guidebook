@@ -76,7 +76,7 @@ export function RelationshipField({
             <Button
               type="button"
               onClick={() => removeRelationship(index)}
-              variant="outline"
+              variant="destructive"
               size="sm"
             >
               Remove

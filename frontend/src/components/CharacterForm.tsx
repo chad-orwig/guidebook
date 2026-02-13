@@ -301,7 +301,7 @@ export function CharacterForm({ characterId }: CharacterFormProps) {
                     </span>
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
                       onClick={() => {
                         const updated = field.value?.filter((_, i) => i !== index);
