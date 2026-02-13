@@ -62,6 +62,10 @@
 
 ## In Progress
 
+### UI Polish
+- Professional polish and refinement across favicons, meta tags, colors, typography, and navigation
+- Epic: [ui-polish.md](epics/ui-polish.md)
+
 ## Not Started
 
 ### Guidebook Viewer Interface
@@ -82,4 +86,4 @@
 
 ---
 
-*Last updated: 2026-02-12 - Production Deployment Epic Completed*
+*Last updated: 2026-02-12 - UI Polish Epic Started*
