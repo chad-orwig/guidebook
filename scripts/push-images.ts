@@ -19,15 +19,28 @@ const IMAGES = [
   },
 ];
 
+// Get git short hash for tagging
+async function getGitHash() {
+  try {
+    const hash = await $`git rev-parse --short HEAD`.text();
+    return hash.trim();
+  } catch {
+    console.error("❌ Could not get git hash. Make sure you're in a git repository.");
+    process.exit(1);
+  }
+}
+
 // Parse command line arguments
 const args = process.argv.slice(2);
 const tagIndex = args.indexOf("--tag");
 const customTag = tagIndex !== -1 ? args[tagIndex + 1] : null;
-const tag = customTag || "latest";
+const gitHash = await getGitHash();
+const tag = customTag || gitHash;
 
 console.log("🐳 Docker Image Build & Push Script");
 console.log("====================================\n");
 console.log(`Docker Hub User: ${DOCKER_HUB_USER}`);
+console.log(`Git Hash: ${gitHash}`);
 console.log(`Tag: ${tag}\n`);
 
 async function buildAndPush() {

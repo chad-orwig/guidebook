@@ -23,7 +23,7 @@ spec:
         # Frontend Container (Caddy serving React SPA)
         - name: frontend
           image: edgethio/guidebook-frontend:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
               name: http
@@ -55,7 +55,7 @@ spec:
         # Backend Container (Bun + Hono API)
         - name: backend
           image: edgethio/guidebook-backend:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
               name: api
