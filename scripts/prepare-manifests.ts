@@ -90,7 +90,7 @@ sudo k3s kubectl apply -f manifests.yaml \\
 echo ""
 echo "⏳ Waiting for rollout to complete..."
 echo ""
-sudo k3s kubectl rollout status deployment/guidebook -n guidebook
+sudo k3s kubectl rollout status deployment/guidebook-app -n guidebook
 
 echo ""
 echo "📊 Checking deployment status..."

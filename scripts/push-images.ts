@@ -57,12 +57,15 @@ async function buildAndPush() {
     for (const image of IMAGES) {
       const remoteImage = `${DOCKER_HUB_USER}/${image.name}:${tag}`;
 
-      console.log(`\n📦 Building ${image.name} for multiple platforms...`);
+      console.log(`\n📦 Building ${image.name}...`);
       console.log(`   Dockerfile: ${image.dockerfile}`);
-      console.log(`   Platforms: linux/amd64, linux/arm64`);
 
-      // Build and push multi-platform image directly
-      await $`docker buildx build --platform linux/amd64,linux/arm64 -f ${image.dockerfile} -t ${remoteImage} --push .`;
+      // Build platforms sequentially to avoid memory issues
+      console.log(`   Building linux/amd64...`);
+      await $`docker buildx build --platform linux/amd64 -f ${image.dockerfile} -t ${remoteImage} --push .`;
+
+      console.log(`   Building linux/arm64...`);
+      await $`docker buildx build --platform linux/arm64 -f ${image.dockerfile} -t ${remoteImage} --push .`;
 
       console.log(`✅ ${image.name} pushed successfully!\n`);
     }
