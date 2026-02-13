@@ -53,7 +53,6 @@ sudo k3s kubectl apply -f manifests.yaml \\
   -l app=guidebook \\
   --prune-allowlist=core/v1/Namespace \\
   --prune-allowlist=core/v1/ConfigMap \\
-  --prune-allowlist=core/v1/Secret \\
   --prune-allowlist=core/v1/Service \\
   --prune-allowlist=apps/v1/Deployment \\
   --prune-allowlist=networking.k8s.io/v1/Ingress
@@ -71,6 +70,8 @@ echo "  sudo k3s kubectl logs -n guidebook -l app=guidebook -f"
 echo ""
 echo "To check status:"
 echo "  sudo k3s kubectl get all -n guidebook"
+echo ""
+echo "Note: Secrets are managed manually and not included in prune"
 `;
 
     fs.writeFileSync(DEPLOY_SCRIPT, deployScript);

@@ -26,19 +26,34 @@ This guide covers deploying the Guidebook application to TrueNAS Scale using Kub
 
 ## Initial Setup
 
-### 1. Configure Secrets
+### 1. Create Secret on Cluster (One-Time)
 
-The `.env.secret` file is already configured with your credentials from the spike. It's located at:
+Secrets are managed manually on the TrueNAS cluster and NOT stored locally or in source control.
+
+**Create the secret on TrueNAS:**
+
+```bash
+# SSH into TrueNAS
+ssh truenas
+
+# Generate a secure auth secret (32+ characters)
+AUTH_SECRET=$(openssl rand -base64 32)
+
+# Create the secret
+sudo k3s kubectl create secret generic guidebook-secrets \
+  --namespace=guidebook \
+  --from-literal=BETTER_AUTH_SECRET="$AUTH_SECRET" \
+  --from-literal=ADMIN_USERNAME="your_admin_username" \
+  --from-literal=ADMIN_PASSWORD="your_secure_password"
+
+# Label the secret so it's not pruned
+sudo k3s kubectl label secret guidebook-secrets \
+  --namespace=guidebook \
+  app=guidebook \
+  environment=production
 ```
-k8s/overlays/production/.env.secret
-```
 
-This file contains:
-- `BETTER_AUTH_SECRET`: Authentication secret (32+ characters)
-- `ADMIN_USERNAME`: Admin user credentials
-- `ADMIN_PASSWORD`: Admin password
-
-**Security Note**: This file is gitignored. Never commit it to version control.
+**Important**: Store these credentials securely (password manager, etc.). They are NOT in source control.
 
 ### 2. Create Host Directories (One-Time Setup)
 
@@ -155,8 +170,8 @@ The application should be accessible at:
 - **Production URL**: https://guidebook.orwig.app
 
 **Initial Login:**
-- Username: (from your `.env.secret`)
-- Password: (from your `.env.secret`)
+- Username: (from your cluster secret)
+- Password: (from your cluster secret)
 
 ## Updating the Application
 
@@ -202,21 +217,38 @@ sudo k3s kubectl rollout restart deployment/guidebook-app -n guidebook
 
 ### Update Secrets
 
-To change admin credentials or auth secret:
+Secrets are managed manually on the cluster. To update them:
 
 ```bash
-# 1. Edit secrets file
-vim k8s/overlays/production/.env.secret
-
-# 2. Regenerate and deploy
-bun run deploy:prepare
+# SSH into TrueNAS
 ssh truenas
-cd /mnt/pool/guidebook/manifests
-sudo ./deploy.sh
 
-# 3. Manually restart deployment
+# Update individual secret values
+sudo k3s kubectl patch secret guidebook-secrets \
+  --namespace=guidebook \
+  --type=json \
+  -p='[{"op": "replace", "path": "/data/ADMIN_PASSWORD", "value": "'$(echo -n "new_password" | base64)'"}]'
+
+# OR delete and recreate the entire secret
+sudo k3s kubectl delete secret guidebook-secrets --namespace=guidebook
+
+sudo k3s kubectl create secret generic guidebook-secrets \
+  --namespace=guidebook \
+  --from-literal=BETTER_AUTH_SECRET="your_secret_here" \
+  --from-literal=ADMIN_USERNAME="your_username" \
+  --from-literal=ADMIN_PASSWORD="your_password"
+
+# Label it so it's not pruned
+sudo k3s kubectl label secret guidebook-secrets \
+  --namespace=guidebook \
+  app=guidebook \
+  environment=production
+
+# Restart deployment to pick up new secrets
 sudo k3s kubectl rollout restart deployment/guidebook-app -n guidebook
 ```
+
+**Note:** Secret values must be base64-encoded when using `kubectl patch`. The `echo -n | base64` handles this automatically.
 
 ## Troubleshooting
 
@@ -302,13 +334,20 @@ sudo ./deploy.sh
 | `BETTER_AUTH_URL` | Auth service URL (with path) | `https://guidebook.orwig.app/api/auth` |
 | `BETTER_AUTH_TRUSTED_ORIGINS` | Allowed origins for auth | `https://guidebook.orwig.app` |
 
-### Secrets (.env.secret)
+### Secrets (Managed on Cluster)
+
+Secrets are created directly on the TrueNAS cluster, not in source control.
 
 | Variable | Description | Generation |
 |----------|-------------|------------|
 | `BETTER_AUTH_SECRET` | JWT signing secret (min 32 chars) | `openssl rand -base64 32` |
 | `ADMIN_USERNAME` | Initial admin username | User-defined |
 | `ADMIN_PASSWORD` | Initial admin password | User-defined |
+
+**To view current secret values on the cluster:**
+```bash
+sudo k3s kubectl get secret guidebook-secrets -n guidebook -o jsonpath='{.data.ADMIN_USERNAME}' | base64 -d
+```
 
 ### Resource Limits
 

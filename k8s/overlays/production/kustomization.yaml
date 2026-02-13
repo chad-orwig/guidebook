@@ -14,15 +14,17 @@ configMapGenerator:
         app: guidebook
         environment: production
 
-secretGenerator:
-  - name: guidebook-secrets
-    envs:
-      - .env.secret
-    options:
-      disableNameSuffixHash: true
-      labels:
-        app: guidebook
-        environment: production
+# Secret is managed manually on the cluster (not in source control)
+# See DEPLOYMENT.md for instructions on creating/updating the secret
+# secretGenerator:
+#   - name: guidebook-secrets
+#     envs:
+#       - .env.secret
+#     options:
+#       disableNameSuffixHash: true
+#       labels:
+#         app: guidebook
+#         environment: production
 
 images:
   - name: edgethio/guidebook-frontend
