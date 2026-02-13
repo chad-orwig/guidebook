@@ -25,6 +25,19 @@ import { writeFile } from 'node:fs/promises';
 
 const app = new Hono();
 
+// Helper function to get the reciprocal relationship type
+function getReciprocalRelationshipType(type: string): string {
+  const reciprocalMap: Record<string, string> = {
+    parent: 'child',
+    child: 'parent',
+    spouse: 'spouse',
+    sibling: 'sibling',
+    friend: 'friend',
+    enemy: 'enemy',
+  };
+  return reciprocalMap[type] || type;
+}
+
 // Helper function to convert MongoDB document to CharacterDocument
 function toCharacterDocument(doc: any): CharacterDocument {
   return {
@@ -53,7 +66,27 @@ app.post('/', requireAuth, zValidator('json', CreateCharacterSchema), async (c) 
   };
 
   const result = await collection.insertOne(docToInsert);
-  const created = await collection.findOne({ _id: result.insertedId });
+  const newCharacterId = result.insertedId;
+
+  // Handle bi-directional relationships for newly created character
+  if (data.relationships && data.relationships.length > 0) {
+    for (const rel of data.relationships) {
+      const reciprocalType = getReciprocalRelationshipType(rel.relationshipType);
+      await collection.updateOne(
+        { _id: new ObjectId(rel.characterId) },
+        {
+          $push: {
+            relationships: {
+              characterId: newCharacterId,
+              relationshipType: reciprocalType,
+            },
+          },
+        }
+      );
+    }
+  }
+
+  const created = await collection.findOne({ _id: newCharacterId });
 
   return c.json(toCharacterDocument(created), 201);
 });
@@ -138,6 +171,12 @@ app.put('/:id', requireAuth, zValidator('json', UpdateCharacterSchema), async (c
     return c.json({ error: 'Invalid character ID' }, 400);
   }
 
+  // Get the current character to compare relationships
+  const currentCharacter = await collection.findOne({ _id: objectId });
+  if (!currentCharacter) {
+    return c.json({ error: 'Character not found' }, 404);
+  }
+
   // Convert relationship characterIds to ObjectId if present
   const updateData = {
     ...data,
@@ -147,6 +186,102 @@ app.put('/:id', requireAuth, zValidator('json', UpdateCharacterSchema), async (c
     })),
   };
 
+  // Handle bi-directional relationships
+  if (data.relationships !== undefined) {
+    const oldRelationships = currentCharacter.relationships || [];
+    const newRelationships = updateData.relationships || [];
+
+    // Create maps for comparison (using characterId as key)
+    const oldRelMap = new Map(
+      oldRelationships.map((rel: any) => [
+        rel.characterId.toString(),
+        rel.relationshipType,
+      ])
+    );
+    const newRelMap = new Map(
+      newRelationships.map((rel: any) => [
+        rel.characterId.toString(),
+        rel.relationshipType,
+      ])
+    );
+
+    // Find relationships to remove, add, or update
+    const toRemove: string[] = [];
+    const toAdd: Array<{ characterId: string; type: string }> = [];
+    const toUpdate: Array<{ characterId: string; oldType: string; newType: string }> = [];
+
+    // Check for removed or changed relationships
+    for (const [charId, oldType] of oldRelMap.entries()) {
+      if (!newRelMap.has(charId)) {
+        toRemove.push(charId);
+      } else if (newRelMap.get(charId) !== oldType) {
+        toUpdate.push({
+          characterId: charId,
+          oldType: oldType,
+          newType: newRelMap.get(charId)!,
+        });
+      }
+    }
+
+    // Check for new relationships
+    for (const [charId, newType] of newRelMap.entries()) {
+      if (!oldRelMap.has(charId)) {
+        toAdd.push({ characterId: charId, type: newType });
+      }
+    }
+
+    // Update reciprocal relationships
+    // Remove reciprocals
+    for (const charId of toRemove) {
+      await collection.updateOne(
+        { _id: new ObjectId(charId) },
+        {
+          $pull: {
+            relationships: { characterId: objectId },
+          },
+        }
+      );
+    }
+
+    // Add reciprocals
+    for (const { characterId: charId, type } of toAdd) {
+      const reciprocalType = getReciprocalRelationshipType(type);
+      await collection.updateOne(
+        { _id: new ObjectId(charId) },
+        {
+          $pull: {
+            relationships: { characterId: objectId },
+          },
+        }
+      );
+      await collection.updateOne(
+        { _id: new ObjectId(charId) },
+        {
+          $push: {
+            relationships: {
+              characterId: objectId,
+              relationshipType: reciprocalType,
+            },
+          },
+        }
+      );
+    }
+
+    // Update reciprocals for changed relationships
+    for (const { characterId: charId, oldType, newType } of toUpdate) {
+      const reciprocalType = getReciprocalRelationshipType(newType);
+      await collection.updateOne(
+        { _id: new ObjectId(charId), 'relationships.characterId': objectId },
+        {
+          $set: {
+            'relationships.$.relationshipType': reciprocalType,
+          },
+        }
+      );
+    }
+  }
+
+  // Now update the original character
   const result = await collection.findOneAndUpdate(
     { _id: objectId },
     { $set: updateData },
@@ -400,6 +535,16 @@ app.delete('/:id', requireAuth, async (c) => {
   } catch (error) {
     return c.json({ error: 'Invalid character ID' }, 400);
   }
+
+  // Remove all relationships pointing to this character from other characters
+  await collection.updateMany(
+    { 'relationships.characterId': objectId },
+    {
+      $pull: {
+        relationships: { characterId: objectId },
+      },
+    }
+  );
 
   const result = await collection.deleteOne({ _id: objectId });
 

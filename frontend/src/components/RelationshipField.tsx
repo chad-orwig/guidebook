@@ -68,7 +68,7 @@ export function RelationshipField({
             >
               {relationshipTypes.map((type) => (
                 <option key={type} value={type}>
-                  {type}
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
                 </option>
               ))}
             </select>

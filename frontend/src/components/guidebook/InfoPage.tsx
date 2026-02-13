@@ -65,22 +65,21 @@ export const InfoPage = forwardRef<HTMLDivElement, InfoPageProps>(
         </div>
 
         {/* Character name - decorative */}
-        <h2 className="text-3xl md:text-5xl font-bold text-center mb-6 md:mb-8 uppercase tracking-wide">
+        <h2 className="text-3xl md:text-5xl font-bold text-center mb-2 uppercase tracking-wide">
           {character?.name}
         </h2>
+
+        {/* Species - small text below name */}
+        {character?.species && (
+          <p className="text-base md:text-lg text-center text-muted-foreground mb-6 md:mb-8">
+            {character.species}
+          </p>
+        )}
 
         {/* Information sections with strong borders */}
         <div className="space-y-4">
           {/* Two-column grid for compact info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            {character?.species && (
-              <div className={cn('border-4 p-3 rounded-lg', borderColor)}>
-                <h3 className="text-base md:text-lg font-bold uppercase tracking-wider mb-1">
-                  Species
-                </h3>
-                <p className="text-sm md:text-base">{character.species}</p>
-              </div>
-            )}
 
             {character?.creationDate && (
               <div className={cn('border-4 p-3 rounded-lg', borderColor)}>
