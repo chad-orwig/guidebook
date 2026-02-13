@@ -6,13 +6,13 @@ The Guidebook Viewer Interface is the public-facing component that displays char
 
 ## Tasks
 
-- [ ] Set up react-pageflip with demo pages
-- [ ] Design big image page layout
-- [ ] Design information page layout
-- [ ] Integrate real character data into pages
-- [ ] Create table of contents
-- [ ] Add navigation and extra controls
-- [ ] Implement responsive design for mobile and desktop
+- [x] Set up react-pageflip with demo pages
+- [x] Design big image page layout
+- [x] Design information page layout
+- [x] Integrate real character data into pages
+- [x] Create table of contents
+- [x] Add navigation and extra controls
+- [x] Implement responsive design for mobile and desktop
 
 ## Task Details
 

@@ -65,7 +65,7 @@ const ListQuerySchema = z.object({
 });
 
 // GET / - List all characters (only id and name)
-app.get('/', requireAuth, zValidator('query', ListQuerySchema), async (c) => {
+app.get('/', zValidator('query', ListQuerySchema), async (c) => {
   const { sortBy, sortOrder } = c.req.valid('query');
   const db = await getDatabase();
   const collection = db.collection('characters');
@@ -103,7 +103,7 @@ app.get('/', requireAuth, zValidator('query', ListQuerySchema), async (c) => {
 });
 
 // GET /:id - Get single character by ID
-app.get('/:id', requireAuth, async (c) => {
+app.get('/:id', async (c) => {
   const id = c.req.param('id');
   const db = await getDatabase();
   const collection = db.collection('characters');

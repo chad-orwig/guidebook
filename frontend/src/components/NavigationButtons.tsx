@@ -25,7 +25,7 @@ export function NavigationButtons() {
   const isManage = currentPath.startsWith('/characters');
 
   return (
-    <div className="fixed bottom-4 right-4 flex gap-2">
+    <div className="fixed bottom-4 right-4 flex gap-2 z-50">
       {session ? (
         <>
           {/* Logout button */}

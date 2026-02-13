@@ -20,11 +20,11 @@ export function useDeleteCharacter() {
   });
 }
 
-export function useCharacter(id: string) {
+export function useCharacter(id: string, options?: { enabled?: boolean }) {
   return useQuery<CharacterDocument, Error>({
     queryKey: ['characters', id],
     queryFn: () => api.characters.get(id),
-    enabled: !!id,
+    enabled: options?.enabled !== false && !!id,
   });
 }
 
