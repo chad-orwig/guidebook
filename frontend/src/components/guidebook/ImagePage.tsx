@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { useCharacter } from '@/hooks/useCharacters';
 import { getColorClasses } from '@/lib/colors';
 import { cn } from '@/lib/utils';

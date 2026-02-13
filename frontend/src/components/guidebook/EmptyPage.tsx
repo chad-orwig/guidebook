@@ -1,6 +1,6 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
-export const EmptyPage = forwardRef<HTMLDivElement>((props, ref) => {
+export const EmptyPage = forwardRef<HTMLDivElement>((_props, ref) => {
   return (
     <div ref={ref} className="w-full h-full bg-amber-50">
       {/* Empty page for alignment purposes */}

@@ -1,6 +1,6 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 
-export const BackCover = forwardRef<HTMLDivElement>((props, ref) => {
+export const BackCover = forwardRef<HTMLDivElement>((_props, ref) => {
   return (
     <div
       ref={ref}

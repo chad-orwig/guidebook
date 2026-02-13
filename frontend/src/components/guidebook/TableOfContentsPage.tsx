@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import type { CharacterListItem } from '@guidebook/models';
 
 interface TableOfContentsPageProps {
