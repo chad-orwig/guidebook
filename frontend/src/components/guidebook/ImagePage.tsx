@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 import { useCharacter } from '@/hooks/useCharacters';
-import { getColorClasses } from '@/lib/colors';
+import { getColorClasses, getContrastTextColor } from '@/lib/colors';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -33,6 +33,9 @@ export const ImagePage = forwardRef<HTMLDivElement, ImagePageProps>(
       ? `border-${character.primaryColor.hue}-${character.primaryColor.shade}`
       : 'border-violet-700';
 
+    // Get text color - use first secondary color with enough contrast, otherwise violet
+    const textColor = getContrastTextColor(character?.primaryColor, character?.secondaryColors);
+
     return (
       <div ref={ref} className="w-full h-full flex items-center justify-center bg-amber-50 p-8">
         <div className="relative w-full max-w-[85%] h-[90%] flex flex-col">
@@ -60,7 +63,7 @@ export const ImagePage = forwardRef<HTMLDivElement, ImagePageProps>(
 
           {/* Name block - overlaps the image */}
           <div className={cn('relative -mt-8 mx-auto px-8 py-4 rounded-lg shadow-xl max-w-[75%] z-10', bgColor)}>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white text-center">
+            <h1 className={cn('text-2xl md:text-3xl lg:text-4xl font-bold text-center', textColor)}>
               {character?.name || 'Loading...'}
             </h1>
           </div>
