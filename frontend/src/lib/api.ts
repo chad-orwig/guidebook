@@ -52,7 +52,13 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
 
 export const api = {
   characters: {
-    list: () => fetchApi<CharacterListItem[]>('/api/characters'),
+    list: (params?: { sortBy?: string; sortOrder?: 'asc' | 'desc' }) => {
+      const queryParams = new URLSearchParams();
+      if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+      if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+      const queryString = queryParams.toString();
+      return fetchApi<CharacterListItem[]>(`/api/characters${queryString ? `?${queryString}` : ''}`);
+    },
     get: (id: string) => fetchApi<CharacterDocument>(`/api/characters/${id}`),
     create: (data: CreateCharacter) =>
       fetchApi<CharacterDocument>('/api/characters', {

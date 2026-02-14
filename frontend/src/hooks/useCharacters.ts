@@ -5,7 +5,7 @@ import type { CharacterListItem, CharacterDocument, UpdateCharacter } from '@gui
 export function useCharacters() {
   return useQuery<CharacterListItem[], Error>({
     queryKey: ['characters'],
-    queryFn: api.characters.list,
+    queryFn: () => api.characters.list({ sortBy: 'name', sortOrder: 'asc' }),
   });
 }
 
