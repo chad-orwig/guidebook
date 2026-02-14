@@ -212,7 +212,7 @@ function GuidebookPage() {
           swipeDistance={30}
           mobileScrollSupport={true}
           onFlip={(e) => setCurrentPage(e.data)}
-          // style={{}}
+          style={{}}
           className="shadow-2xl"
         >
           {pages.map((page, idx) => {
