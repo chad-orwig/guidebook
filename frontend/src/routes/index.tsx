@@ -8,7 +8,9 @@ import { TableOfContentsPage } from '@/components/guidebook/TableOfContentsPage'
 import { EmptyPage } from '@/components/guidebook/EmptyPage';
 import { FrontCover } from '@/components/guidebook/FrontCover';
 import { BackCover } from '@/components/guidebook/BackCover';
-import { Loader2 } from 'lucide-react';
+import { GuidebookInstructions } from '@/components/guidebook/GuidebookInstructions';
+import { Loader2, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/')({
   component: GuidebookPage,
@@ -82,18 +84,15 @@ function GuidebookPage() {
     // 0. Add front cover
     pageList.push({ type: 'front-cover' });
 
-    // 1. Add blank page after cover (so TOC appears on the right side)
-    pageList.push({ type: 'empty' });
-
     const charsPerTOCPage = 12;
     const tocPagesNeeded = Math.ceil(characters.length / charsPerTOCPage);
 
-    // 2. Add TOC pages
+    // 1. Add TOC pages
     for (let i = 0; i < tocPagesNeeded; i++) {
       const startIdx = i * charsPerTOCPage;
       const endIdx = Math.min(startIdx + charsPerTOCPage, characters.length);
-      // Page offset: front cover (1) + blank (1) + TOC pages + trailing blank if needed
-      const pageOffset = 1 + 1 + tocPagesNeeded + (tocPagesNeeded % 2 === 0 ? 1 : 0);
+      // Page offset: front cover (1) + TOC pages + trailing blank if needed
+      const pageOffset = 1 + tocPagesNeeded + (tocPagesNeeded % 2 !== 0 ? 1 : 0);
       pageList.push({
         type: 'toc',
         characters: characters.slice(startIdx, endIdx),
@@ -101,9 +100,8 @@ function GuidebookPage() {
       });
     }
 
-    // 3. Add empty page if TOC count is even (ensures proper left/right alignment)
-    // Front cover (alone) + blank + TOC pages = if TOC is even, add blank
-    if (tocPagesNeeded % 2 === 0) {
+    // 2. Add empty page after TOC if TOC count is odd (ensures proper left/right alignment)
+    if (tocPagesNeeded % 2 !== 0) {
       pageList.push({ type: 'empty' });
     }
 
@@ -132,11 +130,16 @@ function GuidebookPage() {
     if (charIndex === -1) return;
 
     const tocPages = Math.ceil(characters.length / 12);
-    const emptyPagesAfterTOC = tocPages % 2 === 0 ? 1 : 0;
-    // Page calculation: front cover (1) + blank (1) + TOC pages + trailing blank + (charIndex * 2)
-    const targetPage = 1 + 1 + tocPages + emptyPagesAfterTOC + charIndex * 2; // Jump to image page
+    const emptyPagesAfterTOC = tocPages % 2 !== 0 ? 1 : 0;
+    // Page calculation: front cover (1) + TOC pages + trailing blank + (charIndex * 2)
+    const targetPage = 1 + tocPages + emptyPagesAfterTOC + charIndex * 2; // Jump to image page
 
     bookRef.current?.pageFlip()?.turnToPage(targetPage);
+  };
+
+  // Navigate to Table of Contents
+  const handleNavigateToTOC = () => {
+    bookRef.current?.pageFlip()?.turnToPage(1); // TOC starts at page 1
   };
 
   // Keyboard navigation
@@ -203,7 +206,7 @@ function GuidebookPage() {
           autoSize={true}
           maxShadowOpacity={0.5}
           showPageCorners={true}
-          disableFlipByClick={false}
+          disableFlipByClick={true}
           clickEventForward={true}
           useMouseEvents={true}
           swipeDistance={30}
@@ -254,6 +257,23 @@ function GuidebookPage() {
             return null;
           })}
         </HTMLFlipBook>
+
+        {/* Instructions overlay (shows on first visit) */}
+        <GuidebookInstructions />
+
+        {/* Back to TOC button - only show when not on cover or TOC pages */}
+        {currentPage > 0 && pages[currentPage]?.type !== 'toc' && (
+          <Button
+            onClick={handleNavigateToTOC}
+            variant="secondary"
+            size="icon"
+            className="fixed top-4 left-4 z-50 shadow-lg rounded-full"
+            aria-label="Back to Table of Contents"
+            title="Back to Table of Contents"
+          >
+            <BookOpen className="w-5 h-5" />
+          </Button>
+        )}
 
         {/* Page indicator */}
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm z-50">
