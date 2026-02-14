@@ -188,7 +188,7 @@ function GuidebookPage() {
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 overflow-hidden">
       <div className="relative">
         <HTMLFlipBook
-          key={`${bookDimensions.width}`}
+          key={`${bookDimensions.width}-${bookDimensions.usePortrait}`} // Force remount on dimension change
           ref={bookRef}
           width={bookDimensions.width}
           height={bookDimensions.height}
@@ -200,7 +200,7 @@ function GuidebookPage() {
           showCover={true}
           flippingTime={1000}
           usePortrait={bookDimensions.usePortrait}
-          startPage={0}
+          startPage={currentPage}
           drawShadow={true}
           startZIndex={0}
           autoSize={true}
