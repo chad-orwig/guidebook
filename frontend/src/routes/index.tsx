@@ -185,8 +185,8 @@ function GuidebookPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-8">
-      <div className="relative flex items-center justify-center w-full">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 overflow-hidden">
+      <div className="relative">
         <HTMLFlipBook
           key={`${bookDimensions.width}`}
           ref={bookRef}
