@@ -199,7 +199,7 @@ function GuidebookPage() {
           maxHeight={2400}
           showCover={true}
           flippingTime={1000}
-          usePortrait={true}
+          usePortrait={bookDimensions.usePortrait}
           startPage={0}
           drawShadow={true}
           startZIndex={0}
