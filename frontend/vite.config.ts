@@ -15,7 +15,7 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
-    favicons('src/assets/icon.svg'),
+    favicons('src/assets/sparkle.svg'),
   ],
   resolve: {
     alias: {
