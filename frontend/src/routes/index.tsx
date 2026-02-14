@@ -9,7 +9,7 @@ import { EmptyPage } from '@/components/guidebook/EmptyPage';
 import { FrontCover } from '@/components/guidebook/FrontCover';
 import { BackCover } from '@/components/guidebook/BackCover';
 import { GuidebookInstructions } from '@/components/guidebook/GuidebookInstructions';
-import { Loader2, BookOpen } from 'lucide-react';
+import { Loader2, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/')({
@@ -188,7 +188,7 @@ function GuidebookPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-900 p-8">
       <div className="relative flex items-center justify-center w-full">
         <HTMLFlipBook
-          key={`${bookDimensions.usePortrait}-${bookDimensions.width}`}
+          key={`${bookDimensions.width}`}
           ref={bookRef}
           width={bookDimensions.width}
           height={bookDimensions.height}
@@ -199,20 +199,20 @@ function GuidebookPage() {
           maxHeight={2400}
           showCover={true}
           flippingTime={1000}
-          usePortrait={bookDimensions.usePortrait}
+          usePortrait={true}
           startPage={0}
           drawShadow={true}
           startZIndex={0}
           autoSize={true}
           maxShadowOpacity={0.5}
           showPageCorners={true}
-          disableFlipByClick={true}
+          disableFlipByClick={false}
           clickEventForward={true}
-          useMouseEvents={true}
+          useMouseEvents={false}
           swipeDistance={30}
           mobileScrollSupport={true}
           onFlip={(e) => setCurrentPage(e.data)}
-          style={{}}
+          // style={{}}
           className="shadow-2xl"
         >
           {pages.map((page, idx) => {
@@ -272,6 +272,34 @@ function GuidebookPage() {
             title="Back to Table of Contents"
           >
             <BookOpen className="w-5 h-5" />
+          </Button>
+        )}
+
+        {/* Previous page button */}
+        {currentPage > 0 && (
+          <Button
+            onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
+            variant="secondary"
+            size="icon"
+            className="fixed left-4 top-1/2 -translate-y-1/2 z-50 shadow-lg rounded-full"
+            aria-label="Previous page"
+            title="Previous page"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </Button>
+        )}
+
+        {/* Next page button */}
+        {currentPage < pages.length - 1 && (
+          <Button
+            onClick={() => bookRef.current?.pageFlip()?.flipNext()}
+            variant="secondary"
+            size="icon"
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-50 shadow-lg rounded-full"
+            aria-label="Next page"
+            title="Next page"
+          >
+            <ChevronRight className="w-6 h-6" />
           </Button>
         )}
 

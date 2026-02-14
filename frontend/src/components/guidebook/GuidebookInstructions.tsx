@@ -41,7 +41,7 @@ export function GuidebookInstructions() {
 
         <div className="text-gray-200 space-y-4">
           <p className="text-lg text-center">
-            Swipe, click corners, or use arrow keys to turn pages.
+            Use the navigation buttons or arrow keys to turn pages.
           </p>
 
           <div className="flex items-center justify-center gap-3 text-sm">
