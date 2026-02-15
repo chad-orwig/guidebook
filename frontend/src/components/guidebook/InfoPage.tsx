@@ -127,7 +127,7 @@ export const InfoPage = forwardRef<HTMLDivElement, InfoPageProps>(
                       </span>{' '}
                       <button
                         onClick={() => onNavigateToCharacter(rel.characterId)}
-                        className="text-blue-600 underline hover:text-blue-800 font-medium"
+                        className="text-blue-600 underline hover:text-blue-800 font-medium cursor-pointer"
                       >
                         {getCharacterName(rel.characterId)}
                       </button>

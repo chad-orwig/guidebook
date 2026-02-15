@@ -34,7 +34,7 @@ export const TableOfContentsPage = forwardRef<
             >
               <button
                 onClick={() => onNavigateToCharacter(character._id)}
-                className="text-left text-base md:text-xl font-medium text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-4 transition-colors flex-shrink-0"
+                className="cursor-pointer text-left text-base md:text-xl font-medium text-blue-700 hover:text-blue-900 underline decoration-2 underline-offset-4 transition-colors flex-shrink-0"
               >
                 {character.name}
               </button>
