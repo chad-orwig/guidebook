@@ -84,20 +84,32 @@ function GuidebookPage() {
     // 0. Add front cover
     pageList.push({ type: 'front-cover' });
 
-    const charsPerTOCPage = 12;
-    const tocPagesNeeded = Math.ceil(characters.length / charsPerTOCPage);
+    const targetCharsPerTOCPage = 12;
+    const tocPagesNeeded = Math.ceil(characters.length / targetCharsPerTOCPage);
+
+    // Distribute characters evenly across TOC pages
+    const baseCharsPerPage = Math.floor(characters.length / tocPagesNeeded);
+    const extraChars = characters.length % tocPagesNeeded;
 
     // 1. Add TOC pages
+    let charOffset = 0;
     for (let i = 0; i < tocPagesNeeded; i++) {
-      const startIdx = i * charsPerTOCPage;
-      const endIdx = Math.min(startIdx + charsPerTOCPage, characters.length);
-      // Page offset: front cover (1) + TOC pages + trailing blank if needed
-      const pageOffset = 1 + tocPagesNeeded + (tocPagesNeeded % 2 !== 0 ? 1 : 0);
+      // First 'extraChars' pages get one extra character for even distribution
+      const charsOnThisPage = baseCharsPerPage + (i < extraChars ? 1 : 0);
+      const startIdx = charOffset;
+      const endIdx = charOffset + charsOnThisPage;
+
+      // Page offset: front cover (1) + TOC pages + trailing blank if needed + characters before this TOC page
+      const baseOffset = 1 + tocPagesNeeded + (tocPagesNeeded % 2 !== 0 ? 1 : 0);
+      const pageOffset = baseOffset + (startIdx * 2); // Each character takes 2 pages
+
       pageList.push({
         type: 'toc',
         characters: characters.slice(startIdx, endIdx),
         pageOffset,
       });
+
+      charOffset = endIdx;
     }
 
     // 2. Add empty page after TOC if TOC count is odd (ensures proper left/right alignment)
