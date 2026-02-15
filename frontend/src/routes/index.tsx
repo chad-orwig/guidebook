@@ -39,10 +39,10 @@ function GuidebookPage() {
     const getBookConfig = (width: number) => {
       if (width < 640) {
         // Small mobile - portrait single page
-        return { width: 280, height: 420, usePortrait: true };
+        return { width: 280, height: 500, usePortrait: true };
       } else if (width < 768) {
         // Large mobile - portrait single page
-        return { width: 320, height: 480, usePortrait: true };
+        return { width: 320, height: 580, usePortrait: true };
       } else if (width < 900) {
         // Small tablet portrait - single page
         return { width: 380, height: 570, usePortrait: true };
