@@ -7,7 +7,10 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: Recreate  # Use Recreate since we have hostPath volumes
+    type: RollingUpdate  # Use RollingUpdate for zero-downtime deployments
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: guidebook
@@ -92,56 +95,8 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
 
-        # MongoDB Container
-        - name: mongodb
-          image: mongo:8
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 27017
-              name: mongodb
-              protocol: TCP
-          env:
-            - name: MONGO_INITDB_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: guidebook-env
-                  key: MONGO_INITDB_DATABASE
-          volumeMounts:
-            - name: mongodb-storage
-              mountPath: /data/db
-          resources:
-            requests:
-              cpu: 200m
-              memory: 256Mi
-            limits:
-              cpu: 1000m
-              memory: 512Mi
-          livenessProbe:
-            tcpSocket:
-              port: 27017
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 3
-          readinessProbe:
-            exec:
-              command:
-                - mongosh
-                - --eval
-                - db.adminCommand('ping')
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-
       # Volumes for persistent storage
       volumes:
-        # MongoDB data persistence
-        - name: mongodb-storage
-          hostPath:
-            path: /mnt/pool/guidebook/mongo
-            type: DirectoryOrCreate
-
         # Character images persistence
         - name: images-storage
           hostPath:

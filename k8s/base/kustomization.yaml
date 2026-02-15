@@ -6,8 +6,10 @@ namespace: guidebook
 resources:
   - namespace.yaml
   - deployment.yaml
+  - deployment-mongodb.yaml
   - service-frontend.yaml
   - service-backend.yaml
+  - service-mongodb.yaml
   - ingress.yaml
 
 commonLabels:

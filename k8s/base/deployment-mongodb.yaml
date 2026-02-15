@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guidebook-mongodb
+  labels:
+    app: guidebook
+    component: mongodb
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate  # MongoDB needs Recreate due to hostPath volume
+  selector:
+    matchLabels:
+      app: guidebook
+      component: mongodb
+  template:
+    metadata:
+      labels:
+        app: guidebook
+        component: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:8
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+              name: mongodb
+              protocol: TCP
+          env:
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: guidebook-env
+                  key: MONGO_INITDB_DATABASE
+          volumeMounts:
+            - name: mongodb-storage
+              mountPath: /data/db
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - mongosh
+                - --eval
+                - db.adminCommand('ping')
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+      # Volume for MongoDB data persistence
+      volumes:
+        - name: mongodb-storage
+          hostPath:
+            path: /mnt/pool/guidebook/mongo
+            type: DirectoryOrCreate
