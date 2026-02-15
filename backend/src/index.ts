@@ -52,7 +52,16 @@ app.use('*', async (c, next) => {
 })
 
 // Serve static files from uploads directory (must be before routes)
-app.use('/uploads/*', serveStatic({ root: './' }))
+// Images are immutable (timestamp + hash filenames), so cache indefinitely
+app.use(
+  '/uploads/*',
+  serveStatic({
+    root: './',
+    onFound: (_path, c) => {
+      c.header('Cache-Control', 'public, immutable, max-age=31536000')
+    },
+  })
+)
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
